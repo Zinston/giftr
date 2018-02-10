@@ -60,11 +60,13 @@ class User(Base):
     def serialize(self):
         """Return object data in easily serializeable format."""
         return {
+            'id': self.id,
             'name': self.name,
             'email': self.email,
-            'picture': self.picture,
             'address': self.address,
-            'id': self.id
+            'picture': self.picture,
+            'created_at': self.created_at,
+            'updated_at': self.updated_at
         }
 
 
@@ -112,14 +114,14 @@ class Gift(Base):
     def serialize(self):
         """Return object data in easily serializeable format."""
         return {
+            'id': self.id,
             'name': self.name,
             'picture': self.picture,
             'description': self.description,
             'created_at': self.created_at,
             'updated_at': self.updated_at,
             'creator_id': self.creator_id,
-            'category_id': self.category_id,
-            'id': self.id
+            'category_id': self.category_id
         }
 
 
