@@ -40,25 +40,16 @@ def cr_gifts():
     if request.method == 'GET':
         gifts = c.query(Gift).all()
 
-        html = "<html><body>"
-
-        form = "<form method='POST' action='/gifts'>"
-        form += "<input type='text' name='name' placeholder='name'>"
-        form += "<input type='submit'>"
-        form += "</form>"
-        html += form
-
-        html += "<ul>"
-        for gift in gifts:
-            html += "<li>%s</li>" % gift.name
-        html += "</ul></body></html>"
-        return html
+        return render_template('gifts.html',
+                               gifts=gifts)
 
     if request.method == 'POST':
         gift = Gift(name=request.form['name'])
         c.add(gift)
         c.commit()
-        return redirect(url_for('rud_gifts', g_id=gift.id))
+
+        return redirect(url_for('rud_gifts',
+                                g_id=gift.id))
 
 
 @app.route('/gifts/<int:g_id>', methods=['GET', 'UPDATE', 'DELETE'])
@@ -76,7 +67,8 @@ def rud_gifts(g_id):
         gift.name = request.form['name']
         c.add(gift)
         c.commit()
-        return redirect(url_for('rud_gifts', g_id=gift.id))
+        return redirect(url_for('rud_gifts',
+                                g_id=gift.id))
 
     if request.method == 'DELETE':
         c.delete(gift)

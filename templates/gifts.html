@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Giftr</title>
+</head>
+<body>
+	<form method='POST' action='/gifts'>
+    	<input type='text' name='name' placeholder='name'>
+        <input type='submit'>
+    </form>
+
+    <ul>
+    	{% for gift in gifts %}
+    	<li>{{ gift.name }}</li>
+    	{% endfor %}
+    </ul>
+</body>
+</html>
