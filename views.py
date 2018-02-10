@@ -63,7 +63,25 @@ def cr_gifts():
 
 @app.route('/gifts/<int:g_id>', methods=['GET', 'UPDATE', 'DELETE'])
 def rud_gifts(g_id):
-    return 'GET, UPDATE or DELETE gift %s' % g_id
+    gift = c.query(Gift).filter_by(id=g_id).first()
+
+    if request.method == 'GET':
+        html = "<html><body>"
+        if gift: html += gift.name
+        else: html += "No gift here."
+        html += "</body></html>"
+        return html
+
+    if request.method == 'UPDATE':
+        gift.name = request.form['name']
+        c.add(gift)
+        c.commit()
+        return redirect(url_for('rud_gifts', g_id=gift.id))
+
+    if request.method == 'DELETE':
+        c.delete(gift)
+        c.commit()
+        return redirect(url_for('cr_gifts'))
 
 
 # Claims
