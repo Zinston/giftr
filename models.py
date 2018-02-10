@@ -20,6 +20,44 @@ from sqlalchemy import create_engine
 Base = declarative_base()
 
 
+# CLASS #
+
+class User(Base):
+    """Database table for a user."""
+
+    # TABLE #
+    __tablename__ = 'user'
+    # MAPPER #
+    name = Column(
+            String(80),
+            nullable=False)
+
+    email = Column(
+                String(80),
+                nullable=False)
+
+    address = Column(
+    			String(200))
+
+    picture = Column(
+                String(80))
+
+    id = Column(
+            Integer,
+            primary_key=True)
+
+    @property
+    def serialize(self):
+        """Return object data in easily serializeable format."""
+        return {
+            'name': self.name,
+            'email': self.email,
+            'picture': self.picture,
+            'address': self.address,
+            'id': self.id
+        }
+
+
 # CONFIGURATION #
 
 # point to the database we'll use
