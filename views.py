@@ -44,7 +44,9 @@ def cr_gifts():
                                gifts=gifts)
 
     if request.method == 'POST':
-        gift = Gift(name=request.form['name'])
+        gift = Gift(name=request.form.get('name'),
+                    picture=request.form.get('picture'),
+                    description=request.form.get('description'))
         c.add(gift)
         c.commit()
 
@@ -61,9 +63,13 @@ def rud_gifts(g_id):
                                gift=gift)
 
     if request.method == 'UPDATE':
-        gift.name = request.form['name']
+        gift.name = request.form.get('name')
+        gift.picture = request.form.get('picture')
+        gift.description = request.form.get('description')
+        
         c.add(gift)
         c.commit()
+        
         return redirect(url_for('rud_gifts',
                                 g_id=gift.id))
 

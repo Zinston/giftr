@@ -10,12 +10,20 @@
 
 	<section id="get">
 		<h2>{{ gift.name }}</h2>
+
+		{% if gift.picture != '' %}
+		<img src='{{ gift.picture }}'><br>
+		{% endif %}
+
+		{{ gift.description }}
 	</section>
 
 	<section id="update">
 		<h2>Update the gift</h2>
 		<form>
 			<input type='text' name='name' placeholder='name'>
+	    	<input type='text' name='picture' placeholder='picture url'>
+	    	<textarea name='description' placeholder='Description'></textarea>
 	        <input type='submit' value="Edit">
 	    </form>
 	</section>

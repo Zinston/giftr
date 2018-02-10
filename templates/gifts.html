@@ -12,6 +12,8 @@
 		<h2>Create a new gift</h2>
 		<form method='POST' action="{{ url_for('cr_gifts') }}">
 	    	<input type='text' name='name' placeholder='name'>
+	    	<input type='text' name='picture' placeholder='picture url'>
+	    	<textarea name='description' placeholder='Description'></textarea>
 	        <input type='submit'>
 	    </form>
 	</section>
