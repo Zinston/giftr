@@ -5,7 +5,7 @@
 # to manipulate Python run-time environment:
 import sys
 # for Mapper code:
-from sqlalchemy import Column, ForeignKey, Integer, String
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
 # for Configuration code and Class code:
 from sqlalchemy.ext.declarative import declarative_base
 # for creating foreign key relationships:
@@ -43,18 +43,18 @@ class User(Base):
                 nullable=False)
 
     address = Column(
-    			String(200))
+                String(200))
 
     picture = Column(
                 String(80))
 
     created_at = Column(
-					Date,
-					default=datetime.datetime.now())
+                    DateTime,
+                    default=datetime.now())
 
     updated_at = Column(
-					Date,
-					onupdate=datetime.datetime.now())
+                    DateTime,
+                    onupdate=datetime.now())
 
     @property
     def serialize(self):
@@ -72,43 +72,86 @@ class User(Base):
 
 # CLASS #
 
-class Gift(Base):
-	"""Database table for a gift."""
+class Category(Base):
+    """Database table for a gift category."""
 
-	# TABLE #
-	__tablename__ = 'gift'
-	# MAPPER#
-	id = Column(
+    # TABLE #
+    __tablename__ = 'category'
+    # MAPPER#
+    id = Column(
             Integer,
             primary_key=True)
 
-	name = Column(
-			String(80),
-			nullable=False)
+    name = Column(
+            String(80),
+            nullable=False)
 
-	picture = Column(
-				String(80))
+    description = Column(
+                    String(140))
 
-	description = Column(
-					String(140))
+    picture = Column(
+                String(80))
 
-	created_at = Column(
-					Date,
-					default=datetime.datetime.now())
+    created_at = Column(
+                    DateTime,
+                    default=datetime.now())
 
-	updated_at = Column(
-					Date,
-					onupdate=datetime.datetime.now())
+    updated_at = Column(
+                    DateTime,
+                    onupdate=datetime.now())
 
-	creator_id = Column(
-	                Integer,
-	                ForeignKey('user.id'))
+    @property
+    def serialize(self):
+        """Return object data in easily serializeable format."""
+        return {
+            'id': self.id,
+            'name': self.name,
+            'description': self.description,
+            'picture': self.picture,
+            'created_at': self.created_at,
+            'updated_at': self.updated_at
+        }
+
+
+# CLASS #
+
+class Gift(Base):
+    """Database table for a gift."""
+
+    # TABLE #
+    __tablename__ = 'gift'
+    # MAPPER#
+    id = Column(
+            Integer,
+            primary_key=True)
+
+    name = Column(
+            String(80),
+            nullable=False)
+
+    picture = Column(
+                String(80))
+
+    description = Column(
+                    String(140))
+
+    created_at = Column(
+                    DateTime,
+                    default=datetime.now())
+
+    updated_at = Column(
+                    DateTime,
+                    onupdate=datetime.now())
+
+    creator_id = Column(
+                    Integer,
+                    ForeignKey('user.id'))
 
     creator = relationship(User)
 
     category_id = Column(
-    				Integer,
-    				ForeignKey('category.id'))
+                    Integer,
+                    ForeignKey('category.id'))
 
     category = relationship(Category)
 
@@ -130,36 +173,36 @@ class Gift(Base):
 # CLASS #
 
 class Claim(Base):
-	"""Database table for a claim on a gift."""
+    """Database table for a claim on a gift."""
 
-	# TABLE #
-	__tablename__ = 'claim'
-	# MAPPER#
-	id = Column(
+    # TABLE #
+    __tablename__ = 'claim'
+    # MAPPER#
+    id = Column(
             Integer,
             primary_key=True)
 
-	message = Column(
-			String(140),
-			nullable=False)
+    message = Column(
+            String(140),
+            nullable=False)
 
-	created_at = Column(
-					Date,
-					default=datetime.datetime.now())
+    created_at = Column(
+                    DateTime,
+                    default=datetime.now())
 
-	updated_at = Column(
-					Date,
-					onupdate=datetime.datetime.now())
+    updated_at = Column(
+                    DateTime,
+                    onupdate=datetime.now())
 
     gift_id = Column(
-    				Integer,
-    				ForeignKey('gift.id'))
+                    Integer,
+                    ForeignKey('gift.id'))
 
     gift = relationship(Gift)
 
     creator_id = Column(
-	                Integer,
-	                ForeignKey('user.id'))
+                    Integer,
+                    ForeignKey('user.id'))
 
     creator = relationship(User)
 
@@ -173,49 +216,6 @@ class Claim(Base):
             'updated_at': self.updated_at,
             'gift_id': self.gift_id,
             'creator_id': self.creator_id
-        }
-
-
-# CLASS #
-
-class Category(Base):
-	"""Database table for a gift category."""
-
-	# TABLE #
-	__tablename__ = 'category'
-	# MAPPER#
-	id = Column(
-            Integer,
-            primary_key=True)
-
-	name = Column(
-			String(80),
-			nullable=False)
-
-	description = Column(
-					String(140))
-
-	picture = Column(
-				String(80))
-
-	created_at = Column(
-					Date,
-					default=datetime.datetime.now())
-
-	updated_at = Column(
-					Date,
-					onupdate=datetime.datetime.now())
-
-    @property
-    def serialize(self):
-        """Return object data in easily serializeable format."""
-        return {
-            'id': self.id,
-            'name': self.name,
-            'description': self.description,
-            'picture': self.picture,
-            'created_at': self.created_at,
-            'updated_at': self.updated_at
         }
 
 
