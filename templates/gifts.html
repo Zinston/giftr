@@ -4,15 +4,27 @@
 	<title>Giftr</title>
 </head>
 <body>
-	<form method='POST' action='/gifts'>
-    	<input type='text' name='name' placeholder='name'>
-        <input type='submit'>
-    </form>
+	<header>
+		<h1>Giftr</h1>
+	</header>
 
-    <ul>
-    	{% for gift in gifts %}
-    	<li>{{ gift.name }}</li>
-    	{% endfor %}
-    </ul>
+	<section id="post">
+		<h2>Create a new gift</h2>
+		<form method='POST' action="{{ url_for('cr_gifts') }}">
+	    	<input type='text' name='name' placeholder='name'>
+	        <input type='submit'>
+	    </form>
+	</section>
+
+	<section id="get">
+		<h2>All the gifts</h2>
+	    <ul>
+	    	{% for gift in gifts %}
+	    	<li>
+	    		<a href="{{ url_for('rud_gifts', g_id=gift.id) }}">{{ gift.name }}</a>
+	    	</li>
+	    	{% endfor %}
+	    </ul>
+	</section>
 </body>
 </html>
