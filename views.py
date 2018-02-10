@@ -57,11 +57,8 @@ def rud_gifts(g_id):
     gift = c.query(Gift).filter_by(id=g_id).first()
 
     if request.method == 'GET':
-        html = "<html><body>"
-        if gift: html += gift.name
-        else: html += "No gift here."
-        html += "</body></html>"
-        return html
+        return render_template('gift.html',
+                               gift=gift)
 
     if request.method == 'UPDATE':
         gift.name = request.form['name']
