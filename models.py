@@ -48,6 +48,14 @@ class User(Base):
     picture = Column(
                 String(80))
 
+    created_at = Column(
+					Date,
+					default=datetime.datetime.now())
+
+    updated_at = Column(
+					Date,
+					onupdate=datetime.datetime.now())
+
     @property
     def serialize(self):
         """Return object data in easily serializeable format."""
