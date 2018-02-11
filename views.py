@@ -85,6 +85,12 @@ def delete_gift(g_id):
     c.delete(gift)
     c.commit()
 
+    # Delete the claims to that object too
+    claims = c.query(Claim).filter_by(gift_id=gift.id).all()
+    for claim in claims:
+        c.delete(claim)
+        c.commit()
+
     return redirect(url_for('get_gifts'))
 
 
