@@ -4,7 +4,7 @@
 		<img class="card-img-top img-fluid img-link" src="{{ gift.picture }}">
 	</a>
 	{% endif %}
-	<a href="#" class="btn btn-success">Claim</a>
+	<a href="{{ url_for('show_add_claim', g_id=gift.id) }}" class="btn btn-success">Claim</a>
 	<div class="card-body">
 		<a href="{{ url_for('get_gift_byid', g_id=gift.id) }}">
 			<h5 class="card-title">{{ gift.name }}</h5>
@@ -15,7 +15,7 @@
 		<div class="links text-center">
 			<a href="{{ url_for('get_claims', g_id=gift.id) }}" class="btn btn-outline-info">Claims</a>
 			<a href="{{ url_for('show_edit_gift', g_id=gift.id) }}" class="btn btn-outline-warning">Edit</a>
-			<a href="#" class="btn btn-outline-danger">Delete</a>
+			<a href="{{ url_for('show_delete_gift', g_id=gift.id) }}" class="btn btn-outline-danger">Delete</a>
 		</div>
 	</div>
 </div>

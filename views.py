@@ -118,6 +118,14 @@ def edit_gift(g_id):
                             g_id=gift.id))
 
 
+@app.route('/gifts/<int:g_id>/delete', methods=['GET'])
+def show_delete_gift(g_id):
+    gift = c.query(Gift).filter_by(id=g_id).first()
+
+    return render_template('delete_gift.html',
+                           gift=gift)
+
+
 @app.route('/gifts/<int:g_id>/delete', methods=['POST'])
 def delete_gift(g_id):
     gift = c.query(Gift).filter_by(id=g_id).first()
@@ -150,6 +158,14 @@ def get_claims(g_id):
     return render_template('claims.html',
                            g_id=g_id,
                            claims=claims)
+
+
+@app.route('/gifts/<int:g_id>/claims/add', methods=['GET'])
+def show_add_claim(g_id):
+    gift = c.query(Gift).filter_by(id=g_id).first()
+    
+    return render_template('add_claim.html',
+                           gift=gift)
 
 
 @app.route('/gifts/<int:g_id>/claims', methods=['POST'])

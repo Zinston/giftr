@@ -1,0 +1,26 @@
+{% extends 'index.html' %}
+
+{% block header %}
+<header class="jumbotron">
+	<h1 class="display-4">Claim {{ gift.name | truncate(50) }}?</h1>
+</header>
+{% endblock %}
+
+{% block nav %}
+<ol class="breadcrumb ml-auto mb-0" style="padding:.5rem 1rem;">
+	<li class="breadcrumb-item"><a href="{{ url_for('get_gifts') }}">Gifts</a></li>
+    <li class="breadcrumb-item"><a href="{{ url_for('get_gifts', cat=gift.category.id) }}">{{ gift.category.name }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ url_for('get_gift_byid', g_id=gift.id) }}">{{ gift.name | truncate(25) }}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Claim</li>
+</ol>
+{% endblock %}
+
+{% block body %}
+<form method="POST" action="{{ url_for('add_claim', g_id=gift.id) }}">
+	<div class="form-group">
+		<label for="message">Message to the gifter</label>
+    	<textarea id="message" class="form-control" name='message' placeholder='Message'></textarea>
+    </div>
+	<button class="btn btn-outline-success" type="submit">Claim this gift</button>
+</form>
+{% endblock %}

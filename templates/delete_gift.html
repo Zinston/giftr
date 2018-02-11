@@ -1,0 +1,22 @@
+{% extends 'index.html' %}
+
+{% block header %}
+<header class="jumbotron">
+	<h1 class="display-4">Delete {{ gift.name | truncate(50) }}?</h1>
+</header>
+{% endblock %}
+
+{% block nav %}
+<ol class="breadcrumb ml-auto mb-0" style="padding:.5rem 1rem;">
+	<li class="breadcrumb-item"><a href="{{ url_for('get_gifts') }}">Gifts</a></li>
+    <li class="breadcrumb-item"><a href="{{ url_for('get_gifts', cat=gift.category.id) }}">{{ gift.category.name }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ url_for('get_gift_byid', g_id=gift.id) }}">{{ gift.name | truncate(25) }}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Delete</li>
+</ol>
+{% endblock %}
+
+{% block body %}
+<form method="POST" action="{{ url_for('delete_gift', g_id=gift.id) }}" class="text-center">
+	<button class="btn btn-danger btn-lg" type="submit">Confirm</button>
+</form>
+{% endblock %}

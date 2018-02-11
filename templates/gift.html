@@ -17,26 +17,6 @@
 
 {% block body %}
 
-<section id="get">
-	{% include 'gift_card.html' %}
-</section>
+{% include 'gift_card.html' %}
 
-<section id="delete">
-	<h2>Delete the gift</h2>
-	<form method="POST" action="{{ url_for('delete_gift', g_id=gift.id) }}">
-    	<input type='submit' value="Delete">
-    </form>
-</section>
-
-<section id="claim">
-	<h2>Claim the gift</h2>
-	<form method="POST" action="{{ url_for('add_claim', g_id=gift.id) }}">
-		<input type='text' name='message' placeholder='message' value='{{ gift.message }}'>
-		<input type='submit' value="Claim">
-	</form>
-</section>
-
-<section id="back">
-	<a href="{{ url_for('get_gifts') }}">Back</a>
-</section>
 {% endblock %}
