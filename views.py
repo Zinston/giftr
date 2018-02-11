@@ -99,7 +99,8 @@ def delete_gift(g_id):
 def get_all_claims():
     claims = c.query(Claim).all()
 
-    return render_template('claims.html', claims=claims)
+    return render_template('claims.html',
+                           claims=claims)
 
 
 @app.route('/gifts/<int:g_id>/claims', methods=['GET'])
@@ -126,7 +127,8 @@ def add_claim(g_id):
 def get_claim_byid(g_id, c_id):
     claim = c.query(Claim).filter_by(id=c_id).first()
 
-    return render_template('claim.html', claim=claim)
+    return render_template('claim.html',
+                           claim=claim)
 
 
 @app.route('/gifts/<int:g_id>/claims/<int:c_id>/edit', methods=['POST'])
@@ -150,7 +152,8 @@ def delete_claim(g_id, c_id):
     c.delete(claim)
     c.commit()
 
-    return redirect(url_for('get_claims', g_id=g_id))
+    return redirect(url_for('get_claims',
+                            g_id=g_id))
 
 
 # Users
@@ -165,14 +168,58 @@ def rud_users(u_id):
 
 
 # Categories
-@app.route('/categories', methods=['GET', 'POST'])
-def cr_categories():
-    return 'GET or POST categories'
+@app.route('/categories', methods=['GET'])
+def get_categories():
+    categories = c.query(Category).all()
+
+    return render_template('categories.html',
+                           categories=categories)
 
 
-@app.route('/categories/<int:c_id>', methods=['GET', 'UPDATE', 'DELETE'])
-def rud_categories(c_id):
-    return 'GET, UPDATE or DELETE category %s' % c_id
+@app.route('/categories', methods=['POST'])
+def add_category():
+    category = Category(name=request.form.get('name'),
+                        picture=request.form.get('picture'),
+                        description=request.form.get('description'))
+
+    c.add(category)
+    c.commit()
+
+    return redirect(url_for('get_category_byid',
+                            cat_id=category.id))
+
+
+@app.route('/categories/<int:cat_id>', methods=['GET'])
+def get_category_byid(cat_id):
+    category = c.query(Category).filter_by(id=cat_id).first()
+
+    return render_template('category.html',
+                           category=category)
+
+
+@app.route('/categories/<int:cat_id>', methods=['POST'])
+def edit_category(cat_id):
+    category = c.query(Category).filter_by(id=cat_id).first()
+
+    category.name = request.form.get('name')
+    category.picture = request.form.get('picture')
+    category.description = request.form.get('description')
+
+    c.add(category)
+    c.commit()
+
+    return redirect(url_for('get_category_byid',
+                            cat_id=category.id))
+
+
+@app.route('/categories/<int:cat_id>', methods=['POST'])
+def delete_category(cat_id):
+    category = c.query(Category).filter_by(id=cat_id).first()
+
+    c.delete(category)
+    c.commit()
+
+    return redirect(url_for('get_categories'))
 
 
 if __name__ == '__main__':
