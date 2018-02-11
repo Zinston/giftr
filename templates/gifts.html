@@ -1,32 +1,24 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>Giftr</title>
-</head>
-<body>
-	<header>
-		<h1>Giftr</h1>
-	</header>
+{% extends "index.html" %}
 
-	<section id="post">
-		<h2>Create a new gift</h2>
-		<form method='POST' action="{{ url_for('add_gift') }}">
-	    	<input type='text' name='name' placeholder='name'>
-	    	<input type='text' name='picture' placeholder='picture url'>
-	    	<textarea name='description' placeholder='Description'></textarea>
-	        <input type='submit'>
-	    </form>
-	</section>
+{% block body %}
+<section id="post">
+	<h2>Create a new gift</h2>
+	<form method='POST' action="{{ url_for('add_gift') }}">
+    	<input type='text' name='name' placeholder='name'>
+    	<input type='text' name='picture' placeholder='picture url'>
+    	<textarea name='description' placeholder='Description'></textarea>
+        <input type='submit'>
+    </form>
+</section>
 
-	<section id="get">
-		<h2>All the gifts</h2>
-	    <ul>
-	    	{% for gift in gifts %}
-	    	<li>
-	    		<a href="{{ url_for('get_gift_byid', g_id=gift.id) }}">{{ gift.name }}</a>
-	    	</li>
-	    	{% endfor %}
-	    </ul>
-	</section>
-</body>
-</html>
+<section id="get">
+	<h2>All the gifts</h2>
+    <ul>
+    	{% for gift in gifts %}
+    	<li>
+    		<a href="{{ url_for('get_gift_byid', g_id=gift.id) }}">{{ gift.name }}</a>
+    	</li>
+    	{% endfor %}
+    </ul>
+</section>
+{% endblock %}
