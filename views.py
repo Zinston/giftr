@@ -95,7 +95,7 @@ def delete_gift(g_id):
 
 
 # Claims
-@app.route('/claims', methods=['GET'])
+@app.route('/gifts/claims', methods=['GET'])
 def get_all_claims():
     claims = c.query(Claim).all()
 
