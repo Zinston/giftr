@@ -1,0 +1,27 @@
+{% extends "index.html" %}
+
+{% block body %}
+<section id="post">
+	<h2>Create a new category</h2>
+	<form method='POST' action="{{ url_for('add_category') }}">
+    	<input type='text' name='name' placeholder='name'>
+    	<input type='text' name='picture' placeholder='picture url'>
+    	<textarea name='description' placeholder='Description'></textarea>
+        <input type='submit'>
+    </form>
+</section>
+
+<section id="get">
+	<h2>Categories</h2>
+
+	<ul>
+	    {% for category in categories %}
+	    <li><a href="{{ url_for('get_category_byid', cat_id=category.id) }}">{{ loop.index }}. {{ category.name }}</a></li>
+    {% endfor %}
+    </ul>
+</section>
+
+<section id="back">
+    <a href="{{ url_for('get_gifts') }}">Back</a>
+</section>
+{% endblock %}
