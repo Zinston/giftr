@@ -10,8 +10,11 @@
 			<h5 class="card-title">{{ gift.name }}</h5>
 		</a>
 		<p class="card-text">{{ gift.description }}</p>
-		<p class="card-text"><small class="text-muted">Created on {{ gift.created_at.strftime('%d %b %Y at %H:%M') }}
-			{% if gift.updated_at %}<br>Last updated on {{ gift.updated_at.strftime('%d %b %Y at %H:%M') }}{% endif %}</small></p>
+		<p class="card-text">
+			<small class="text-muted">
+				{% if gift.updated_at %}<br>Last updated on {{ gift.updated_at.strftime('%d %b %Y at %H:%M') }}<br>{% endif %}
+				Created on {{ gift.created_at.strftime('%d %b %Y at %H:%M') }}
+			</small></p>
 		<div class="links text-center">
 			<a href="{{ url_for('get_claims', g_id=gift.id) }}" class="btn btn-outline-info">Claims</a>
 			<a href="{{ url_for('show_edit_gift', g_id=gift.id) }}" class="btn btn-outline-warning">Edit</a>

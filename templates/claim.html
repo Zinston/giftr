@@ -1,10 +1,29 @@
 {% extends "index.html" %}
 
-{% block body %}
-<section id="get">
-	<h2>Claim</h2>
+{% block header %}
+<header class="jumbotron">
+    <h1 class="display-4">{{ claim.message | truncate(50) }}</h1>
+</header>
+{% endblock %}
 
-    {{ claim.message }}
+{% block nav %}
+<ol class="breadcrumb ml-auto mb-0" style="padding:.5rem 1rem;">
+    <li class="breadcrumb-item"><a href="{{ url_for('get_gifts') }}">Gifts</a></li>
+    <li class="breadcrumb-item"><a href="{{ url_for('get_gifts', cat=claim.gift.category.id) }}">{{ claim.gift.category.name }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ url_for('get_gift_byid', g_id=claim.gift.id) }}">{{ claim.gift.name | truncate(25) }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ url_for('get_gift_byid', g_id=claim.gift.id) }}">Claims</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{ claim.message | truncate(25) }}</li>
+</ol>
+{% endblock %}
+
+{% block body %}
+<section id="claim">
+    {{ claim.message }}<br><br>
+
+    <small class="text-muted">
+    	{% if claim.updated_at %}Last updated on {{ claim.updated_at.strftime('%d %b %Y at %H:%M') }}<br>{% endif %}
+    	Created on {{ claim.created_at.strftime('%d %b %Y at %H:%M') }}
+	</small>
 </section>
 
 <section id="update">
@@ -20,9 +39,5 @@
 	<form method="POST" action="{{ url_for('delete_claim', g_id=claim.gift_id, c_id=claim.id) }}">
     	<input type='submit' value="Delete">
     </form>
-</section>
-
-<section id="back">
-    <a href="{{ url_for('get_gift_byid', g_id=claim.gift_id) }}">Back</a>
 </section>
 {% endblock %}
