@@ -89,14 +89,59 @@ def delete_gift(g_id):
 
 
 # Claims
-@app.route('/gifts/<int:g_id>/claims', methods=['GET', 'POST'])
-def cr_claims(g_id):
-    return 'GET or POST claims on gift %s' % g_id
+@app.route('/claims', methods=['GET'])
+def get_all_claims():
+    claims = c.query(Claim).all()
+
+    return jsonify(claims)
 
 
-@app.route('/gifts/<int:g_id>/claims/<int:c_id>', methods=['GET', 'UPDATE', 'DELETE'])
-def rud_claims(g_id, c_id):
-    return 'GET, UPDATE or DELETE claim %s on gift %s' % (g_id, c_id)
+@app.route('/gifts/<int:g_id>/claims', methods=['GET'])
+def get_claims(g_id):
+    claims = c.query(Claim).filter_by(gift_id=g_id).all()
+
+    return jsonify(claims)
+
+
+@app.route('/gifts/<int:g_id>/claims', methods=['POST'])
+def add_claim(g_id):
+    claim = Claim(message=request.form.get('message'),
+                  gift_id=g_id)
+
+    c.add(claim)
+    c.commit()
+
+    return redirect(url_for('get_claim_byid',
+                            c_id=claim.id))
+
+
+@app.route('/gifts/<int:g_id>/claims/<int:c_id>', methods=['GET'])
+def get_claim_byid(g_id, c_id):
+    claim = c.query(Claim).filter_by(claim_id=c_id).first()
+
+    return jsonify(claim)
+
+
+@app.route('/gifts/<int:g_id>/claims/<int:c_id>/edit', methods=['POST'])
+def edit_claim(g_id, c_id):
+    claim = c.query(Claim).filter_by(claim_id=c_id).first()
+
+    claim.message = request.form.get('message')
+
+    c.add(claim)
+    c.commit()
+
+    return redirect(url_for('get_claim_byid', c_id=c_id))
+
+
+@app.route('/gifts/<int:g_id>/claims/<int:c_id>/delete', methods=['POST'])
+def delete_claim(g_id, c_id):
+    claim = c.query(Claim).filter_by(claim_id=c_id).first()
+
+    c.delete(claim)
+    c.commit()
+
+    return redirect(url_for('get_claims'))
 
 
 # Users
