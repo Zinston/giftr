@@ -99,14 +99,14 @@ def delete_gift(g_id):
 def get_all_claims():
     claims = c.query(Claim).all()
 
-    return jsonify(claims)
+    return render_template('claims.html', claims=claims)
 
 
 @app.route('/gifts/<int:g_id>/claims', methods=['GET'])
 def get_claims(g_id):
     claims = c.query(Claim).filter_by(gift_id=g_id).all()
 
-    return jsonify(claims)
+    return render_template('claims.html', claims=claims)
 
 
 @app.route('/gifts/<int:g_id>/claims', methods=['POST'])

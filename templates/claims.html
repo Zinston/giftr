@@ -1,0 +1,16 @@
+{% extends "index.html" %}
+
+{% block body %}
+<section id="get">
+	<h2>Claims</h2>
+
+    {% for claim in claims %}
+    <a href="{{ url_for('get_claim_byid', g_id=claim.gift_id, c_id=claim.id) }}">{{ loop.index }}.</a> {{ claim.message }}<br>
+    <br>
+    {% endfor %}
+</section>
+
+<section id="back">
+    <a href="{{ url_for('get_gifts') }}">Back</a>
+</section>
+{% endblock %}
