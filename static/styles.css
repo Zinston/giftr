@@ -48,3 +48,7 @@
 .img-link:hover {
 	opacity:.5
 }
+
+.jumbotron {
+    background-color: white;
+}
