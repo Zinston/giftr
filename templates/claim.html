@@ -7,6 +7,7 @@
 <header class="jumbotron">
 {% endif %}
     <h1 class="display-4">{{ claim.message | truncate(50) }}</h1>
+    <p class="lead">A claim on {{ claim.gift.name }}</p>
 </header>
 {% endblock %}
 

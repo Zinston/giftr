@@ -94,6 +94,8 @@ def add_gift():
     c.add(gift)
     c.commit()
 
+    flash("Thanks for your generosity! %s was successfully added." % gift.name)
+
     return redirect(url_for('get_gift_byid',
                             g_id=gift.id))
 
@@ -130,6 +132,8 @@ def edit_gift(g_id):
     c.add(gift)
     c.commit()
 
+    flash("%s was successfully edited." % gift.name)
+
     return redirect(url_for('get_gift_byid',
                             g_id=gift.id))
 
@@ -154,6 +158,8 @@ def delete_gift(g_id):
     for claim in claims:
         c.delete(claim)
         c.commit()
+
+    flash("%s was successfully deleted." % gift.name)
 
     return redirect(url_for('get_gifts'))
 
@@ -193,6 +199,8 @@ def add_claim(g_id):
     c.add(claim)
     c.commit()
 
+    flash("Congratulations! You successfully claimed %s." % claim.gift.name)
+
     return redirect(url_for('get_claim_byid',
                             g_id=g_id,
                             c_id=claim.id))
@@ -223,6 +231,8 @@ def edit_claim(g_id, c_id):
     c.add(claim)
     c.commit()
 
+    flash("Your claim on %s was successfully edited." % claim.gift.name)
+
     return redirect(url_for('get_claim_byid',
                             g_id=g_id,
                             c_id=c_id))
@@ -240,8 +250,12 @@ def show_delete_claim(g_id, c_id):
 def delete_claim(g_id, c_id):
     claim = c.query(Claim).filter_by(id=c_id).first()
 
+    gift_name = claim.gift.name
+
     c.delete(claim)
     c.commit()
+
+    flash("Your claim on %s was successfully deleted." % gift_name)
 
     return redirect(url_for('get_claims',
                             g_id=g_id))
@@ -281,6 +295,8 @@ def add_category():
     c.add(category)
     c.commit()
 
+    flash("The category \"%s\" was successfully added." % category.name)
+
     return redirect(url_for('get_category_byid',
                             cat_id=category.id))
 
@@ -312,6 +328,8 @@ def edit_category(cat_id):
     c.add(category)
     c.commit()
 
+    flash("The category \"%s\" was successfully edited." % category.name)
+
     return redirect(url_for('get_category_byid',
                             cat_id=category.id))
 
@@ -330,6 +348,8 @@ def delete_category(cat_id):
 
     c.delete(category)
     c.commit()
+
+    flash("The category \"%s\" was successfully deleted." % category.name)
 
     return redirect(url_for('get_categories'))
 
@@ -417,6 +437,7 @@ def gconnect():
     # matches the id stored in the session
     if stored_token is not None and gplus_id == stored_gplus_id:
         print 'Current user is already connected.'
+        flash("Welcome %s!" % session['username'])
 
         return make_response(render_template('login_success.html'))
 
@@ -450,6 +471,8 @@ def gconnect():
     session['user_id'] = user_id
 
     # Return html to place into the 'result' div
+    flash("Welcome %s!" % session['username'])
+
     return make_response(render_template('login_success.html'))
 
 
@@ -528,7 +551,7 @@ def gdisconnect():
 
     response = make_response(json.dumps('Could not revoke the token.'), 500)
     response.headers['Content-Type'] = 'application/json'
-    print 'error'
+
     return response
 
 
