@@ -16,6 +16,10 @@
 {% endblock %}
 
 {% block body %}
+<div class="text-center">
+    <a href="{{ url_for('show_add_claim', g_id=gift.id) }}" class="btn btn-success btn-lg">Claim</a>
+<div>
+<br>
 <div class="list-group">
     {% for claim in claims %}
     <a href="{{ url_for('get_claim_byid', g_id=claim.gift_id, c_id=claim.id) }}" class="list-group-item list-group-item-action">{{ claim.message }}</a>

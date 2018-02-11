@@ -17,27 +17,14 @@
 {% endblock %}
 
 {% block body %}
-<section id="claim">
-    {{ claim.message }}<br><br>
+{{ claim.message }}<br><br>
 
-    <small class="text-muted">
-    	{% if claim.updated_at %}Last updated on {{ claim.updated_at.strftime('%d %b %Y at %H:%M') }}<br>{% endif %}
-    	Created on {{ claim.created_at.strftime('%d %b %Y at %H:%M') }}
-	</small>
-</section>
-
-<section id="update">
-	<h2>Update the claim</h2>
-	<form method="POST" action="{{ url_for('edit_claim', g_id=claim.gift_id, c_id=claim.id) }}">
-		<input type='text' name='message' placeholder='message' value='{{ claim.message }}'>
-        <input type='submit' value="Edit">
-    </form>
-</section>
-
-<section id="delete">
-	<h2>Delete the claim</h2>
-	<form method="POST" action="{{ url_for('delete_claim', g_id=claim.gift_id, c_id=claim.id) }}">
-    	<input type='submit' value="Delete">
-    </form>
-</section>
+<small class="text-muted">
+	{% if claim.updated_at %}Last updated on {{ claim.updated_at.strftime('%d %b %Y at %H:%M') }}<br>{% endif %}
+	Created on {{ claim.created_at.strftime('%d %b %Y at %H:%M') }}
+</small>
+<br>
+<br>
+<a href="{{ url_for('show_edit_claim', g_id=claim.gift_id, c_id=claim.id) }}" class="btn btn-outline-warning">Edit</a>
+<a href="{{ url_for('show_delete_claim', g_id=claim.gift_id, c_id=claim.id) }}" class="btn btn-outline-danger">Delete</a>
 {% endblock %}

@@ -190,6 +190,14 @@ def get_claim_byid(g_id, c_id):
                            claim=claim)
 
 
+@app.route('/gifts/<int:g_id>/claims/<int:c_id>/edit', methods=['GET'])
+def show_edit_claim(g_id, c_id):
+    claim = c.query(Claim).filter_by(id=c_id).first()
+
+    return render_template('edit_claim.html',
+                           claim=claim)
+
+
 @app.route('/gifts/<int:g_id>/claims/<int:c_id>/edit', methods=['POST'])
 def edit_claim(g_id, c_id):
     claim = c.query(Claim).filter_by(id=c_id).first()
@@ -202,6 +210,14 @@ def edit_claim(g_id, c_id):
     return redirect(url_for('get_claim_byid',
                             g_id=g_id,
                             c_id=c_id))
+
+
+@app.route('/gifts/<int:g_id>/claims/<int:c_id>/delete', methods=['GET'])
+def show_delete_claim(g_id, c_id):
+    claim = c.query(Claim).filter_by(id=c_id).first()
+
+    return render_template('delete_claim.html',
+                           claim=claim)
 
 
 @app.route('/gifts/<int:g_id>/claims/<int:c_id>/delete', methods=['POST'])
