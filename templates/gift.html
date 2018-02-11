@@ -7,7 +7,16 @@
 </header>
 {% endblock %}
 
+{% block nav %}
+<ol class="breadcrumb ml-auto mb-0" style="padding:.5rem 1rem;">
+	<li class="breadcrumb-item"><a href="{{ url_for('get_gifts') }}">Gifts</a></li>
+    <li class="breadcrumb-item"><a href="{{ url_for('get_gifts', cat=gift.category.id) }}">{{ gift.category.name }}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{ gift.name }}</li>
+</ol>
+{% endblock %}
+
 {% block body %}
+
 <section id="get">
 	{% if gift.picture %}
 	<img src='{{ gift.picture }}' width='50px' height='50px'><br>
