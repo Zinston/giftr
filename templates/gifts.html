@@ -1,6 +1,36 @@
 {% extends "index.html" %}
 
 {% block body %}
+<section id="get">
+	<form>
+		Category:
+		<select name="cat">
+			{% for category in categories %}
+			{% if req_cat and req_cat.id == category.id %}
+			<option value="{{ category.id }}" selected>{{ category.name }}</option>
+			{% else %}
+			<option value="{{ category.id }}">{{ category.name }}</option>
+			{% endif %}
+			{% endfor %}
+		</select>
+
+		<input type="submit" value="Change categories">
+	</form>
+
+	{% if req_cat %}
+	<h2>Gifts in the category {{ req_cat.name }}</h2>
+	{% else %}
+	<h2>All the gifts</h2>
+	{% endif %}
+    <ul>
+    	{% for gift in gifts %}
+    	<li>
+    		<a href="{{ url_for('get_gift_byid', g_id=gift.id) }}">{{ gift.name }}</a>
+    	</li>
+    	{% endfor %}
+    </ul>
+</section>
+
 <section id="post">
 	<h2>Create a new gift</h2>
 	<form method='POST' action="{{ url_for('add_gift') }}">
@@ -14,16 +44,5 @@
     	</select>
         <input type='submit'>
     </form>
-</section>
-
-<section id="get">
-	<h2>All the gifts</h2>
-    <ul>
-    	{% for gift in gifts %}
-    	<li>
-    		<a href="{{ url_for('get_gift_byid', g_id=gift.id) }}">{{ gift.name }}</a>
-    	</li>
-    	{% endfor %}
-    </ul>
 </section>
 {% endblock %}

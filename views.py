@@ -37,8 +37,19 @@ app = Flask(__name__)
 # Gifts
 @app.route('/gifts', methods=['GET'])
 def get_gifts():
-    gifts = c.query(Gift).all()
     categories = c.query(Category).all()
+
+    req_cat = request.args.get('cat')
+    if req_cat:
+        gifts = c.query(Gift).filter_by(category_id=req_cat).all()
+        req_cat = c.query(Category).filter_by(id=req_cat).first()
+
+        return render_template('gifts.html',
+                        gifts=gifts,
+                        categories=categories,
+                        req_cat=req_cat)
+    
+    gifts = c.query(Gift).all()
 
     return render_template('gifts.html',
                            gifts=gifts,
