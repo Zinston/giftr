@@ -58,7 +58,13 @@ def get_gifts():
                            gifts=gifts)
 
 
-@app.route('/gifts', methods=['POST'])
+@app.route('/gifts/add', methods=['GET'])
+def show_add_gift():
+    categories = c.query(Category).all()
+    
+    return render_template('add_gift.html', categories=categories)
+
+@app.route('/gifts/add', methods=['POST'])
 def add_gift():
     gift = Gift(name=request.form.get('name'),
                 picture=request.form.get('picture'),
