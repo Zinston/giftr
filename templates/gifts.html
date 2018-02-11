@@ -1,10 +1,8 @@
 {% extends "index.html" %}
 
-{% block body %}
-<section id="get">
-	<form>
-		Category:
-		<select name="cat">
+{% block nav %}
+<form class="form-inline justify-content-center ml-auto">
+	<select class="form-control mr-2" name="cat" onchange='this.form.submit();'>
 			{% for category in categories %}
 			{% if req_cat and req_cat.id == category.id %}
 			<option value="{{ category.id }}" selected>{{ category.name }}</option>
@@ -13,10 +11,11 @@
 			{% endif %}
 			{% endfor %}
 		</select>
+</form>
+{% endblock %}
 
-		<input type="submit" value="Change categories">
-	</form>
-
+{% block body %}
+<section id="get">
 	{% if req_cat %}
 	<h2>Gifts in the category {{ req_cat.name }}</h2>
 	{% else %}

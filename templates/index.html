@@ -12,6 +12,8 @@
 	<body>
 		<nav class="navbar navbar-expand-xl navbar-light bg-light">
 			<a class="navbar-brand" href="{{ url_for('get_gifts') }}">Giftr</a>
+			{% block nav %}
+			{% endblock %}
 		</nav>
 
 		<div class="container">

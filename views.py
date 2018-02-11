@@ -20,7 +20,8 @@ from flask import (Flask,
                    url_for,
                    render_template,
                    flash,
-                   jsonify)
+                   jsonify,
+                   g)
 
 # Bind database
 engine = create_engine('sqlite:///giftr.db')
@@ -53,8 +54,8 @@ def get_gifts():
     gifts = c.query(Gift).all()
 
     return render_template('gifts.html',
-                           gifts=gifts,
-                           categories=categories)
+                           categories=categories,
+                           gifts=gifts)
 
 
 @app.route('/gifts', methods=['POST'])
@@ -240,6 +241,14 @@ def delete_category(cat_id):
     c.commit()
 
     return redirect(url_for('get_categories'))
+
+
+# HELPERS
+
+#@app.context_processor
+#def inject_categories():
+#    categories = c.query(Category).all()
+#    return dict(categories=categories)
 
 
 if __name__ == '__main__':
