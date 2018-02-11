@@ -154,16 +154,17 @@ def get_all_claims():
 @app.route('/gifts/<int:g_id>/claims', methods=['GET'])
 def get_claims(g_id):
     claims = c.query(Claim).filter_by(gift_id=g_id).all()
+    gift = c.query(Gift).filter_by(id=g_id).first()
 
     return render_template('claims.html',
-                           g_id=g_id,
+                           gift=gift,
                            claims=claims)
 
 
 @app.route('/gifts/<int:g_id>/claims/add', methods=['GET'])
 def show_add_claim(g_id):
     gift = c.query(Gift).filter_by(id=g_id).first()
-    
+
     return render_template('add_claim.html',
                            gift=gift)
 

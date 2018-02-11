@@ -1,20 +1,24 @@
 {% extends "index.html" %}
 
+{% block header %}
+<header class="jumbotron">
+    <h1 class="display-4">Claims to {{ gift.name | truncate(50) }}</h1>
+</header>
+{% endblock %}
+
+{% block nav %}
+<ol class="breadcrumb ml-auto mb-0" style="padding:.5rem 1rem;">
+    <li class="breadcrumb-item"><a href="{{ url_for('get_gifts') }}">Gifts</a></li>
+    <li class="breadcrumb-item"><a href="{{ url_for('get_gifts', cat=gift.category.id) }}">{{ gift.category.name }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ url_for('get_gift_byid', g_id=gift.id) }}">{{ gift.name | truncate(25) }}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Claims</li>
+</ol>
+{% endblock %}
+
 {% block body %}
-<section id="get">
-	<h2>Claims</h2>
-
+<div class="list-group">
     {% for claim in claims %}
-    <a href="{{ url_for('get_claim_byid', g_id=claim.gift_id, c_id=claim.id) }}">{{ loop.index }}.</a> {{ claim.message }}<br>
-    <br>
+    <a href="{{ url_for('get_claim_byid', g_id=claim.gift_id, c_id=claim.id) }}" class="list-group-item list-group-item-action">{{ claim.message }}</a>
     {% endfor %}
-</section>
-
-<section id="back">
-    {% if g_id %}
-    <a href="{{ url_for('get_gift_byid', g_id=g_id) }}">Back</a>
-    {% else %}
-    <a href="{{ url_for('get_gifts') }}">Back</a>
-    {% endif %}
-</section>
+</div>
 {% endblock %}
