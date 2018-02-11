@@ -1,9 +1,6 @@
 {% extends "index.html" %}
 
 {% block nav %}
-<div class="navbar-nav">
-	<a class="nav-item nav-link" href="{{ url_for('show_add_gift') }}">Give something</a>
-</div>
 <form class="form-inline justify-content-center ml-auto">
 	<select class="form-control" name="cat" onchange='this.form.submit();'>
 		{% for category in categories %}
