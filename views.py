@@ -126,7 +126,7 @@ def add_claim(g_id):
 def get_claim_byid(g_id, c_id):
     claim = c.query(Claim).filter_by(id=c_id).first()
 
-    return jsonify(claim)
+    return render_template('claim.html', claim=claim)
 
 
 @app.route('/gifts/<int:g_id>/claims/<int:c_id>/edit', methods=['POST'])
@@ -150,7 +150,7 @@ def delete_claim(g_id, c_id):
     c.delete(claim)
     c.commit()
 
-    return redirect(url_for('get_claims'))
+    return redirect(url_for('get_claims', g_id=g_id))
 
 
 # Users

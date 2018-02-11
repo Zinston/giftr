@@ -1,0 +1,28 @@
+{% extends "index.html" %}
+
+{% block body %}
+<section id="get">
+	<h2>Claim</h2>
+
+    {{ claim.message }}
+</section>
+
+<section id="update">
+	<h2>Update the claim</h2>
+	<form method="POST" action="{{ url_for('edit_claim', g_id=claim.gift_id, c_id=claim.id) }}">
+		<input type='text' name='message' placeholder='message' value='{{ claim.message }}'>
+        <input type='submit' value="Edit">
+    </form>
+</section>
+
+<section id="delete">
+	<h2>Delete the claim</h2>
+	<form method="POST" action="{{ url_for('delete_claim', g_id=claim.gift_id, c_id=claim.id) }}">
+    	<input type='submit' value="Delete">
+    </form>
+</section>
+
+<section id="back">
+    <a href="{{ url_for('get_gift_byid', g_id=claim.gift_id) }}">Back</a>
+</section>
+{% endblock %}
