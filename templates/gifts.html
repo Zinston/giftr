@@ -21,13 +21,11 @@
 	{% else %}
 	<h2>All the gifts</h2>
 	{% endif %}
-    <ul>
+    <div class="list-group">
     	{% for gift in gifts %}
-    	<li>
-    		<a href="{{ url_for('get_gift_byid', g_id=gift.id) }}">{{ gift.name }}</a>
-    	</li>
+    	<a class="list-group-item list-group-item-action" href="{{ url_for('get_gift_byid', g_id=gift.id) }}">{{ gift.name }}</a>
     	{% endfor %}
-    </ul>
+    </div>
 </section>
 
 <section id="post">
@@ -56,7 +54,7 @@
 	    		{% endfor %}
 	    	</select>
 	    </div>
-	    
+
         <button class="btn btn-outline-success mt-2 mt-xl-0" type="submit">Gift</button>
     </form>
 </section>
