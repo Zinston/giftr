@@ -52,3 +52,9 @@
 .jumbotron {
     background-color: white;
 }
+
+.navbar-img {
+    max-width: 45px !important;
+    padding: 0 !important;
+    border-radius: 50%;
+}

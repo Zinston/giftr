@@ -20,8 +20,25 @@
 				<a class="nav-item nav-link" href="{{ url_for('get_categories') }}">Categories</a>
 				<a class="nav-item nav-link" href="{{ url_for('show_add_gift') }}">Give something</a>
 			</div>
+
 			{% block nav %}
 			{% endblock %}
+
+			{% if session.username %}
+			<div class="ml-auto d-flex flex-row justify-content-center mt-3 mt-xl-0">
+				<div class="d-flex flex-column mr-2">
+					<div class="text-right">{{ session.username }}</div>
+					<div class="text-right"><small><a href="#">Log out</a></small></div>
+				</div>
+				<div class="d-flex flex-column">
+					<img class="img-fluid navbar-img" src="{{ session.picture }}">
+				</div>
+			</div>
+			{% else %}
+			<div class="navbar-nav ml-auto text-lganddown-center">
+				<a class="nav-item nav-link" href="{{ url_for('show_login') }}">Log in</a>
+			</div>
+			{% endif %}
 		</nav>
 
 		{% block header %}
