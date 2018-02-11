@@ -42,3 +42,9 @@
         column-count: auto;
     }
 }
+
+
+
+.img-link:hover {
+	opacity:.5
+}
