@@ -7,14 +7,16 @@
 	<a href="{{ url_for('show_add_claim', g_id=gift.id) }}" class="btn btn-success">Claim</a>
 	<div class="card-body">
 		<a href="{{ url_for('get_gift_byid', g_id=gift.id) }}">
-			<h5 class="card-title">{{ gift.name }}</h5>
+			<h5 class="card-title mb-0">{{ gift.name }}</h5>
 		</a>
-		<p class="card-text">{{ gift.description }}</p>
+		<span class="badge badge-info mb-3">{{ gift.category.name }}</span>
+		<p class="card-text mb-2">{{ gift.description }}</p>
 		<p class="card-text">
 			<small class="text-muted">
 				{% if gift.updated_at %}<br>Last updated on {{ gift.updated_at.strftime('%d %b %Y at %H:%M') }}<br>{% endif %}
 				Created on {{ gift.created_at.strftime('%d %b %Y at %H:%M') }}
-			</small></p>
+			</small>
+		</p>
 		<div class="links text-center">
 			<a href="{{ url_for('get_claims', g_id=gift.id) }}" class="btn btn-outline-info">Claims</a>
 			<a href="{{ url_for('show_edit_gift', g_id=gift.id) }}" class="btn btn-outline-warning">Edit</a>
