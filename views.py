@@ -113,7 +113,9 @@ def get_all_claims():
 def get_claims(g_id):
     claims = c.query(Claim).filter_by(gift_id=g_id).all()
 
-    return render_template('claims.html', claims=claims)
+    return render_template('claims.html',
+                           g_id=g_id,
+                           claims=claims)
 
 
 @app.route('/gifts/<int:g_id>/claims', methods=['POST'])

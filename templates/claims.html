@@ -11,6 +11,10 @@
 </section>
 
 <section id="back">
+    {% if g_id %}
+    <a href="{{ url_for('get_gift_byid', g_id=g_id) }}">Back</a>
+    {% else %}
     <a href="{{ url_for('get_gifts') }}">Back</a>
+    {% endif %}
 </section>
 {% endblock %}
