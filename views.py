@@ -21,7 +21,14 @@ from flask import (Flask,
                    render_template,
                    flash,
                    jsonify,
-                   g)
+                   g,
+                   session,
+                   make_response)
+
+# For OAuth
+from oauth2client.client import (flow_from_clientsecrets,
+                                 FlowExchangeError)
+import random, string, httplib2, json, requests
 
 # Bind database
 engine = create_engine('sqlite:///giftr.db')
@@ -318,6 +325,29 @@ def delete_category(cat_id):
     return redirect(url_for('get_categories'))
 
 
+# AUTH
+
+@app.route('/login', methods=['GET'])
+def show_login():
+    """Get the login page with a generated random state variable."""
+    # If the user is already logged in, redirect them.
+    if 'username' in session:
+        flash("You're already logged in. Disconnect first.")
+        return redirect(url_for('get_gifts'))
+
+    # Generate a random string of 32 uppercase letters and digits
+    choice = string.ascii_uppercase + string.digits
+    chars = [random.choice(choice) for x in xrange(32)]
+    state = ''.join(chars)
+
+    # store that random string in the session
+    session['state'] = state
+
+    return render_template('login.html',
+                           STATE=session['state'],
+                           user='logging in')
+
+
 # HELPERS
 
 #@app.context_processor
@@ -327,5 +357,6 @@ def delete_category(cat_id):
 
 
 if __name__ == '__main__':
+    app.secret_key = 'super secret key'
     app.debug = True
     app.run(port=8080)
