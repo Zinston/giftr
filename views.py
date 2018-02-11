@@ -45,7 +45,7 @@ def get_gifts():
     try:
         req_cat = int(req_cat)
         if req_cat > 0 and req_cat <= len(categories):
-            gifts = c.query(Gift).filter_by(category_id=req_cat).all()
+            gifts = c.query(Gift).filter_by(category_id=req_cat).order_by(Gift.created_at.desc()).all()
             req_cat = c.query(Category).filter_by(id=req_cat).first()
 
             return render_template('gifts.html',
@@ -55,7 +55,7 @@ def get_gifts():
     except:
         pass
     
-    gifts = c.query(Gift).all()
+    gifts = c.query(Gift).order_by(Gift.created_at.desc()).all()
 
     return render_template('gifts.html',
                            categories=categories,
