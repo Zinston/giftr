@@ -14,14 +14,19 @@
 </form>
 {% endblock %}
 
+{% block header %}
+<header class="jumbotron">
+	{% if req_cat %}
+	<h1 class="display-4">Gifts in the category {{ req_cat.name }}</h1>
+	{% else %}
+	<h1 class="display-4">All the gifts</h1>
+	{% endif %}
+</header>
+{% endblock %}
+
 {% block body %}
 <section id="get">
-	{% if req_cat %}
-	<h2>Gifts in the category {{ req_cat.name }}</h2>
-	{% else %}
-	<h2>All the gifts</h2>
-	{% endif %}
-    <div class="list-group">
+	<div class="list-group">
     	{% for gift in gifts %}
     	<a class="list-group-item list-group-item-action" href="{{ url_for('get_gift_byid', g_id=gift.id) }}">{{ gift.name }}</a>
     	{% endfor %}
