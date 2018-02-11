@@ -1,7 +1,11 @@
 {% extends "index.html" %}
 
 {% block header %}
+{% if gift.category.picture %}
+<header class="jumbotron" style="background: url('{{ gift.category.picture }}') no-repeat; background-size: cover;">
+{% else %}
 <header class="jumbotron">
+{% endif %}
     <h1 class="display-4">Claims to {{ gift.name | truncate(50) }}</h1>
 </header>
 {% endblock %}

@@ -1,7 +1,11 @@
 {% extends "index.html" %}
 
 {% block header %}
+{% if category.picture %}
+<header class="jumbotron" style="background: url('{{ category.picture }}') no-repeat; background-size: cover;">
+{% else %}
 <header class="jumbotron">
+{% endif %}
     <h1 class="display-4">Edit {{ category.name }}</h1>
 </header>
 {% endblock %}

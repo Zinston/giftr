@@ -16,9 +16,13 @@
 {% endblock %}
 
 {% block header %}
+{% if req_cat and req_cat.picture %}
+<header class="jumbotron" style="background: url('{{ req_cat.picture }}') no-repeat; background-size: cover;">
+{% else %}
 <header class="jumbotron">
+{% endif %}
 	{% if req_cat %}
-	<h1 class="display-4">Gifts in the category {{ req_cat.name }}</h1>
+	<h1 class="display-4">{{ req_cat.name }}</h1>
 	{% else %}
 	<h1 class="display-4">All the gifts</h1>
 	{% endif %}
