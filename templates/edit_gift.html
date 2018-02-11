@@ -1,0 +1,50 @@
+{% extends 'index.html' %}
+
+{% block header %}
+<header class="jumbotron">
+	<h1 class="display-4">Edit {{ gift.name | truncate(50) }}</h1>
+</header>
+{% endblock %}
+
+{% block nav %}
+<ol class="breadcrumb ml-auto mb-0" style="padding:.5rem 1rem;">
+	<li class="breadcrumb-item"><a href="{{ url_for('get_gifts') }}">Gifts</a></li>
+    <li class="breadcrumb-item"><a href="{{ url_for('get_gifts', cat=gift.category.id) }}">{{ gift.category.name }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ url_for('get_gift_byid', g_id=gift.id) }}">{{ gift.name | truncate(25) }}</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Edit</li>
+</ol>
+{% endblock %}
+
+{% block body %}
+<form method="POST" action="{{ url_for('edit_gift', g_id=gift.id) }}">
+	<div class="form-group">
+		<label for="name">Name</label>
+    	<input id="name" class="form-control" type='text' name='name' placeholder='Name' value='{{ gift.name }}'>
+    </div>
+
+    <div class="form-group">
+    	<label for="picture">Picture URL</label>
+    	<input id="picture" class="form-control" type='text' name='picture' placeholder='Picture URL' value='{{ gift.picture }}'>
+    </div>
+
+    <div class="form-group">
+    	<label for="description">Description</label>
+    	<textarea id="description" class="form-control" name='description' placeholder='Description'>{{ gift.description }}</textarea>
+    </div>
+
+    <div class="form-group">
+    	<label for="category">Category</label>
+    	<select id="category" class="form-control" name="category">
+    		{% for category in categories %}
+    		{% if category.id == gift.category_id %}
+    		<option value="{{ category.id }}" selected>{{ category.name }}</option>
+    		{% else %}
+    		<option value="{{ category.id }}">{{ category.name }}</option>
+    		{% endif %}
+    		{% endfor %}
+    	</select>
+    </div>
+
+    <button class="btn btn-outline-success" type="submit">Edit</button>
+</form>
+{% endblock %}

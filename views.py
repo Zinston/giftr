@@ -66,7 +66,8 @@ def get_gifts():
 def show_add_gift():
     categories = c.query(Category).all()
     
-    return render_template('add_gift.html', categories=categories)
+    return render_template('add_gift.html',
+                           categories=categories)
 
 @app.route('/gifts/add', methods=['POST'])
 def add_gift():
@@ -87,6 +88,16 @@ def get_gift_byid(g_id):
     categories = c.query(Category).all()
 
     return render_template('gift.html',
+                           gift=gift,
+                           categories=categories)
+
+
+@app.route('/gifts/<int:g_id>/edit', methods=['GET'])
+def show_edit_gift(g_id):
+    gift = c.query(Gift).filter_by(id=g_id).first()
+    categories = c.query(Category).all()
+
+    return render_template('edit_gift.html',
                            gift=gift,
                            categories=categories)
 
