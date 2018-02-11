@@ -28,7 +28,7 @@
 			<div class="ml-auto d-flex flex-row justify-content-center mt-3 mt-xl-0">
 				<div class="d-flex flex-column mr-2">
 					<div class="text-right">{{ session.username }}</div>
-					<div class="text-right"><small><a href="#">Log out</a></small></div>
+					<div class="text-right"><small><a href="{{ url_for('disconnect') }}">Log out</a></small></div>
 				</div>
 				<div class="d-flex flex-column">
 					<img class="img-fluid navbar-img" src="{{ session.picture }}">

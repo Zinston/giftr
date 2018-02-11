@@ -30,7 +30,7 @@ from google.oauth2 import id_token
 from google.auth.transport import requests as g_requests
 from oauth2client.client import (flow_from_clientsecrets,
                                  FlowExchangeError)
-import random, string, httplib2, json, requests
+import random, string, json, requests
 
 # Bind database
 engine = create_engine('sqlite:///giftr.db')
@@ -336,6 +336,8 @@ def delete_category(cat_id):
 
 # AUTH
 
+# Log in
+
 @app.route('/login', methods=['GET'])
 def show_login():
     """Get the login page with a generated random state variable."""
@@ -416,8 +418,7 @@ def gconnect():
     if stored_token is not None and gplus_id == stored_gplus_id:
         print 'Current user is already connected.'
 
-        return make_response(render_template('login_success.html',
-                                             user=serialize_session_user()))
+        return make_response(render_template('login_success.html'))
 
     # If we get this far, the access token is VALID
     # and it's THE RIGHT ACCESS TOKEN.
@@ -449,8 +450,86 @@ def gconnect():
     session['user_id'] = user_id
 
     # Return html to place into the 'result' div
-    return make_response(render_template('login_success.html',
-                                         user=serialize_session_user()))
+    return make_response(render_template('login_success.html'))
+
+
+# Log out
+
+@app.route('/disconnect')
+def disconnect():
+    # If there's a user...
+    if 'provider' in session:
+        # If they logged in through GOOGLE
+        if session['provider'] == 'google':
+            # Revoke their Google access token
+            gdisconnect()
+            del session['gplus_id']
+
+        # In any case, log them out...
+        session.pop('username', None)
+        session.pop('email', None)
+        session.pop('picture', None)
+        session.pop('user_id', None)
+        session.pop('provider', None)
+        session.pop('token', None)
+
+        # Flash them
+        flash("You have successfully been logged out.")
+
+        # Redirect them
+        return redirect(url_for('get_gifts'))
+
+    # If there's no user...
+    else:
+        # Flash them
+        flash("You were not logged in to begin with...")
+
+        # Redirect them
+        return redirect(url_for('get_gifts'))
+
+
+@app.route('/gdisconnect')
+def gdisconnect():
+    """Disconnect a user using Google OAuth."""
+    # Disconnect = revoke a user's token and revoque their session
+
+    # PART 1: Check that there is a user to disconnect
+    # -------
+
+    # Get the ACCESS TOKEN from the session
+    token = session.get('token')
+
+    # If there is none, then we have no user logged in
+    if token is None:
+        response = make_response(json.dumps('Current user not connected'), 401)
+        response.headers['Content-Type'] = 'application/json'
+
+        return response
+
+    # PART 2: Disconnect user
+    # -------
+
+    # Have Google revoke the token
+
+    # 2. Create a POST request with the URL
+    # and store the json result of that request
+    url = 'https://accounts.google.com/o/oauth2/revoke'
+    params = {'token': token}
+    headers = {'content-type': 'application/x-www-form-urlencoded'}
+
+    result = requests.post(url=url, params=params, headers=headers)
+
+    # 3. Check if it's a success
+    if result.status_code == '200':
+        # 4. Send the response (DISCONNECT() TAKES CARE OF DELETING SESSION)
+        response = make_response(json.dumps('Successfully disconnected.'), 200)
+        response.headers['Content-Type'] = 'application/json'
+        return response
+
+    response = make_response(json.dumps('Could not revoke the token.'), 500)
+    response.headers['Content-Type'] = 'application/json'
+    print 'error'
+    return response
 
 
 # HELPERS
@@ -476,14 +555,6 @@ def get_user_id(email):
         return user.id
     except:
         return None
-
-
-def serialize_session_user():
-    """Return a dictionary containing a user's info from session."""
-    return {'username': session.get('username'),
-            'email': session.get('email'),
-            'picture': session.get('picture'),
-            'id': session.get('user_id')}
 
 
 if __name__ == '__main__':
