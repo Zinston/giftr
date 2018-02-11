@@ -35,48 +35,57 @@ app = Flask(__name__)
 # ROUTES
 # Client routes
 # Gifts
-@app.route('/gifts', methods=['GET', 'POST'])
-def cr_gifts():
-    if request.method == 'GET':
-        gifts = c.query(Gift).all()
+@app.route('/gifts', methods=['GET'])
+def get_gifts():
+    gifts = c.query(Gift).all()
 
-        return render_template('gifts.html',
-                               gifts=gifts)
-
-    if request.method == 'POST':
-        gift = Gift(name=request.form.get('name'),
-                    picture=request.form.get('picture'),
-                    description=request.form.get('description'))
-        c.add(gift)
-        c.commit()
-
-        return redirect(url_for('rud_gifts',
-                                g_id=gift.id))
+    return render_template('gifts.html',
+                           gifts=gifts)
 
 
-@app.route('/gifts/<int:g_id>', methods=['GET', 'UPDATE', 'DELETE'])
-def rud_gifts(g_id):
+@app.route('/gifts', methods=['POST'])
+def add_gift():
+    gift = Gift(name=request.form.get('name'),
+                picture=request.form.get('picture'),
+                description=request.form.get('description'))
+    c.add(gift)
+    c.commit()
+
+    return redirect(url_for('get_gifts',
+                            g_id=gift.id))
+
+
+@app.route('/gifts/<int:g_id>', methods=['GET'])
+def get_gift_byid(g_id):
     gift = c.query(Gift).filter_by(id=g_id).first()
 
-    if request.method == 'GET':
-        return render_template('gift.html',
-                               gift=gift)
+    return render_template('gift.html',
+                           gift=gift)
 
-    if request.method == 'UPDATE':
-        gift.name = request.form.get('name')
-        gift.picture = request.form.get('picture')
-        gift.description = request.form.get('description')
-        
-        c.add(gift)
-        c.commit()
-        
-        return redirect(url_for('rud_gifts',
-                                g_id=gift.id))
+    
+@app.route('/gifts/<int:g_id>/edit', methods=['POST'])
+def edit_gift(g_id):
+    gift = c.query(Gift).filter_by(id=g_id).first()
 
-    if request.method == 'DELETE':
-        c.delete(gift)
-        c.commit()
-        return redirect(url_for('cr_gifts'))
+    gift.name = request.form.get('name')
+    gift.picture = request.form.get('picture')
+    gift.description = request.form.get('description')
+
+    c.add(gift)
+    c.commit()
+
+    return redirect(url_for('get_gift_byid',
+                            g_id=gift.id))
+
+
+@app.route('/gifts/<int:g_id>/delete', methods=['POST'])
+def delete_gift(g_id):
+    gift = c.query(Gift).filter_by(id=g_id).first()
+
+    c.delete(gift)
+    c.commit()
+
+    return redirect(url_for('get_gifts'))
 
 
 # Claims
