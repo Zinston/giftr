@@ -3,6 +3,7 @@
 {% block nav %}
 <form class="form-inline justify-content-center ml-auto">
 	<select class="form-control" name="cat" onchange='this.form.submit();'>
+		<option value="">All</option>
 		{% for category in categories %}
 		{% if req_cat and req_cat.id == category.id %}
 		<option value="{{ category.id }}" selected>{{ category.name }}</option>

@@ -42,14 +42,18 @@ def get_gifts():
     categories = c.query(Category).all()
 
     req_cat = request.args.get('cat')
-    if req_cat:
-        gifts = c.query(Gift).filter_by(category_id=req_cat).all()
-        req_cat = c.query(Category).filter_by(id=req_cat).first()
+    try:
+        req_cat = int(req_cat)
+        if req_cat > 0 and req_cat <= len(categories):
+            gifts = c.query(Gift).filter_by(category_id=req_cat).all()
+            req_cat = c.query(Category).filter_by(id=req_cat).first()
 
-        return render_template('gifts.html',
-                        gifts=gifts,
-                        categories=categories,
-                        req_cat=req_cat)
+            return render_template('gifts.html',
+                                   gifts=gifts,
+                                   categories=categories,
+                                   req_cat=req_cat)
+    except:
+        pass
     
     gifts = c.query(Gift).all()
 

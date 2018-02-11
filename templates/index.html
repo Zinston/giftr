@@ -13,6 +13,7 @@
 		<nav class="navbar navbar-expand-xl navbar-light bg-light">
 			<a class="navbar-brand" href="{{ url_for('get_gifts') }}">Giftr</a>
 			<div class="navbar-nav">
+				<a class="nav-item nav-link" href="{{ url_for('get_gifts') }}">Home</a>
 				<a class="nav-item nav-link" href="{{ url_for('show_add_gift') }}">Give something</a>
 			</div>
 			{% block nav %}
