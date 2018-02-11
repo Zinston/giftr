@@ -118,31 +118,34 @@ def add_claim(g_id):
     c.commit()
 
     return redirect(url_for('get_claim_byid',
+                            g_id=g_id,
                             c_id=claim.id))
 
 
 @app.route('/gifts/<int:g_id>/claims/<int:c_id>', methods=['GET'])
 def get_claim_byid(g_id, c_id):
-    claim = c.query(Claim).filter_by(claim_id=c_id).first()
+    claim = c.query(Claim).filter_by(id=c_id).first()
 
     return jsonify(claim)
 
 
 @app.route('/gifts/<int:g_id>/claims/<int:c_id>/edit', methods=['POST'])
 def edit_claim(g_id, c_id):
-    claim = c.query(Claim).filter_by(claim_id=c_id).first()
+    claim = c.query(Claim).filter_by(id=c_id).first()
 
     claim.message = request.form.get('message')
 
     c.add(claim)
     c.commit()
 
-    return redirect(url_for('get_claim_byid', c_id=c_id))
+    return redirect(url_for('get_claim_byid',
+                            g_id=g_id,
+                            c_id=c_id))
 
 
 @app.route('/gifts/<int:g_id>/claims/<int:c_id>/delete', methods=['POST'])
 def delete_claim(g_id, c_id):
-    claim = c.query(Claim).filter_by(claim_id=c_id).first()
+    claim = c.query(Claim).filter_by(id=c_id).first()
 
     c.delete(claim)
     c.commit()

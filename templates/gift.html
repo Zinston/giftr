@@ -35,6 +35,14 @@
 	    </form>
 	</section>
 
+	<section id="claim">
+		<h2>Claim the gift</h2>
+		<form method="POST" action="{{ url_for('add_claim', g_id=gift.id) }}">
+			<input type='text' name='message' placeholder='message' value='{{ gift.message }}'>
+			<input type='submit' value="Claim">
+		</form>
+	</section>
+
 	<section id="back">
 		<a href="{{ url_for('get_gifts') }}">Back</a>
 	</section>
