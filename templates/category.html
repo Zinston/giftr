@@ -1,34 +1,32 @@
 {% extends "index.html" %}
 
+{% block header %}
+<header class="jumbotron">
+    <h1 class="display-4">{{ category.name }}</h1>
+</header>
+{% endblock %}
+
+{% block nav %}
+<ol class="breadcrumb ml-auto mb-0" style="padding:.5rem 1rem;">
+	<li class="breadcrumb-item"><a href="{{ url_for('get_gifts') }}">Gifts</a></li>
+	<li class="breadcrumb-item"><a href="{{ url_for('get_categories') }}">Categories</a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{ category.name }}</li>
+</ol>
+{% endblock %}
+
 {% block body %}
-<section id="get">
-	<h2>{{ category.name }}</h2>
+{% if category.picture %}
+<img src='{{ category.picture }}' width='50px' height='50px'><br>
+{% endif %}
 
-	{% if category.picture %}
-	<img src='{{ category.picture }}' width='50px' height='50px'><br>
-	{% endif %}
+{{ category.description }}<br><br>
 
-	{{ category.description }}
-</section>
-
-<section id="update">
-	<h2>Update the category</h2>
-	<form method="POST" action="{{ url_for('edit_category', cat_id=category.id) }}">
-		<input type='text' name='name' placeholder='name' value='{{ category.name }}'>
-    	<input type='text' name='picture' placeholder='picture url' value='{{ category.picture }}'>
-    	<textarea name='description' placeholder='Description'>{{ category.description }}</textarea>
-        <input type='submit' value="Edit">
-    </form>
-</section>
-
-<section id="delete">
-	<h2>Delete the category</h2>
-	<form method="POST" action="{{ url_for('delete_gift', g_id=category.id) }}">
-    	<input type='submit' value="Delete">
-    </form>
-</section>
-
-<section id="back">
-	<a href="{{ url_for('get_gifts') }}">Back</a>
-</section>
+<small class="text-muted">
+	{% if category.updated_at %}Last updated on {{ category.updated_at.strftime('%d %b %Y at %H:%M') }}<br>{% endif %}
+	Created on {{ category.created_at.strftime('%d %b %Y at %H:%M') }}
+</small>
+<br>
+<br>
+<a href="{{ url_for('show_edit_category', cat_id=category.id) }}" class="btn btn-outline-warning">Edit</a>
+<a href="{{ url_for('show_delete_category', cat_id=category.id) }}" class="btn btn-outline-danger">Delete</a>
 {% endblock %}

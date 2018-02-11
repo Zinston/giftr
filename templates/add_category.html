@@ -2,19 +2,20 @@
 
 {% block header %}
 <header class="jumbotron">
-	<h1 class="display-4">Give something</h1>
+    <h1 class="display-4">Add a category</h1>
 </header>
 {% endblock %}
 
 {% block nav %}
 <ol class="breadcrumb ml-auto mb-0" style="padding:.5rem 1rem;">
-    <li class="breadcrumb-item"><a href="{{ url_for('get_gifts') }}">Gifts</a></li>
+	<li class="breadcrumb-item"><a href="{{ url_for('get_gifts') }}">Gifts</a></li>
+	<li class="breadcrumb-item"><a href="{{ url_for('get_categories') }}">Categories</a></li>
     <li class="breadcrumb-item active" aria-current="page">Add</li>
 </ol>
 {% endblock %}
 
 {% block body %}
-<form method='POST' action="{{ url_for('add_gift') }}">
+<form method='POST' action="{{ url_for('add_category') }}">
 	<div class="form-group">
 		<label for="name">Name</label>
     	<input id="name" class="form-control" type='text' name='name' placeholder='Name'>
@@ -30,15 +31,6 @@
     	<textarea id="description" class="form-control" name='description' placeholder='Description'></textarea>
     </div>
 
-    <div class="form-group">
-    	<label for="category">Category</label>
-    	<select id="category" class="form-control" name="category">
-    		{% for category in categories %}
-    		<option value="{{ category.id }}">{{ category.name }}</option>
-    		{% endfor %}
-    	</select>
-    </div>
-
-    <button class="btn btn-outline-success" type="submit">Gift</button>
+    <button class="btn btn-outline-success" type="submit">Create category</button>
 </form>
 {% endblock %}

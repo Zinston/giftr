@@ -1,27 +1,26 @@
 {% extends "index.html" %}
 
+{% block header %}
+<header class="jumbotron">
+    <h1 class="display-4">Categories</h1>
+</header>
+{% endblock %}
+
+{% block nav %}
+<ol class="breadcrumb ml-auto mb-0" style="padding:.5rem 1rem;">
+    <li class="breadcrumb-item"><a href="{{ url_for('get_gifts') }}">Gifts</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Categories</li>
+</ol>
+{% endblock %}
+
 {% block body %}
-<section id="post">
-	<h2>Create a new category</h2>
-	<form method='POST' action="{{ url_for('add_category') }}">
-    	<input type='text' name='name' placeholder='name'>
-    	<input type='text' name='picture' placeholder='picture url'>
-    	<textarea name='description' placeholder='Description'></textarea>
-        <input type='submit'>
-    </form>
-</section>
-
-<section id="get">
-	<h2>Categories</h2>
-
-	<ul>
-	    {% for category in categories %}
-	    <li><a href="{{ url_for('get_category_byid', cat_id=category.id) }}">{{ loop.index }}. {{ category.name }}</a></li>
+<div class="text-center">
+    <a href="{{ url_for('show_add_category') }}" class="btn btn-success btn-lg">Add a category</a>
+<div>
+<br>
+<div class="list-group">
+    {% for category in categories %}
+    <a href="{{ url_for('get_category_byid', cat_id=category.id) }}" class="list-group-item list-group-item-action">{{ category.name }}</a>
     {% endfor %}
-    </ul>
-</section>
-
-<section id="back">
-    <a href="{{ url_for('get_gifts') }}">Back</a>
-</section>
+</div>
 {% endblock %}

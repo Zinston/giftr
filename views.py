@@ -251,6 +251,11 @@ def get_categories():
                            categories=categories)
 
 
+@app.route('/categories/add', methods=['GET'])
+def show_add_category():
+    return render_template('add_category.html')
+
+
 @app.route('/categories', methods=['POST'])
 def add_category():
     category = Category(name=request.form.get('name'),
@@ -272,6 +277,14 @@ def get_category_byid(cat_id):
                            category=category)
 
 
+@app.route('/categories/<int:cat_id>/edit', methods=['GET'])
+def show_edit_category(cat_id):
+    category = c.query(Category).filter_by(id=cat_id).first()
+
+    return render_template('edit_category.html',
+                           category=category)
+
+
 @app.route('/categories/<int:cat_id>', methods=['POST'])
 def edit_category(cat_id):
     category = c.query(Category).filter_by(id=cat_id).first()
@@ -285,6 +298,14 @@ def edit_category(cat_id):
 
     return redirect(url_for('get_category_byid',
                             cat_id=category.id))
+
+
+@app.route('/categories/<int:cat_id>/delete', methods=['GET'])
+def show_delete_category(cat_id):
+    category = c.query(Category).filter_by(id=cat_id).first()
+
+    return render_template('delete_category.html',
+                           category=category)
 
 
 @app.route('/categories/<int:cat_id>', methods=['POST'])
