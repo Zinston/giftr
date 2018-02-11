@@ -435,11 +435,48 @@ def gconnect():
     # Specify we used Google to sign in
     session['provider'] = 'google'
 
+    # Check if user needs to be registered
+
+    # 1. Get the user id from db if user exists
+    user_id = get_user_id(session.get('email'))
+
+    # 2. If it doesn't exist: create it and get his
+    # newly created id
+    if not user_id:
+        user_id = create_user_from_session()
+
+    # 3. Store the user id in the session
+    session['user_id'] = user_id
+
+    # Return html to place into the 'result' div
     return make_response(render_template('login_success.html',
                                          user=serialize_session_user()))
 
 
 # HELPERS
+
+def create_user_from_session():
+    # Create a new User in db with the info from the session
+    new_user = User(name=session.get('username'),
+                    email=session.get('email'),
+                    picture=session.get('picture'))
+    c.add(new_user)
+    c.commit()
+
+    # Get the new User, from their email
+    user_id = get_user_id(session.get('email'))
+
+    # Return the new User's id
+    return user_id
+
+
+def get_user_id(email):
+    try:
+        user = c.query(User).filter_by(email=email).one()
+        return user.id
+    except:
+        return None
+
 
 def serialize_session_user():
     """Return a dictionary containing a user's info from session."""
