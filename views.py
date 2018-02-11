@@ -26,6 +26,8 @@ from flask import (Flask,
                    make_response)
 
 # For OAuth
+from google.oauth2 import id_token
+from google.auth.transport import requests as g_requests
 from oauth2client.client import (flow_from_clientsecrets,
                                  FlowExchangeError)
 import random, string, httplib2, json, requests
@@ -38,6 +40,13 @@ c = DBSession()
 
 # Bind Flask
 app = Flask(__name__)
+
+# API Secrets and IDs
+# Get client id for Google OAuth2, from json file
+google_client_secrets_f = open('google_client_secrets.json', 'r')
+google_client_secrets = google_client_secrets_f.read()
+google_client_secrets_json = json.loads(google_client_secrets)
+CLIENT_ID = google_client_secrets_json['web']['client_id']
 
 
 # ROUTES
@@ -348,12 +357,96 @@ def show_login():
                            user='logging in')
 
 
+@app.route('/gconnect', methods=['GET', 'POST'])
+def gconnect():
+    """Login and/or register a user using Google OAuth."""
+    # Check if the posted STATE matches the session state
+    if request.args.get('state') != session['state']:
+        response = make_response(json.dumps('Invalid state parameter'), 401)
+        response.headers['Content-Type'] = 'application/json'
+
+        return response
+
+    # Get the token sent through ajax
+    token = request.data
+
+    # Verify it
+    try:
+        # Specify the CLIENT_ID of the app that accesses the backend:
+        idinfo = id_token.verify_oauth2_token(token, g_requests.Request(), CLIENT_ID)
+
+        if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
+            # Wrong issuer
+            message = 'Wrong issuer.'
+            response = make_response(json.dumps(message), 401)
+            response.headers['Content-Type'] = 'application/json'
+
+            return response
+
+    except ValueError:
+        # Invalid token
+        message = 'Invalid token.'
+        response = make_response(json.dumps(message), 401)
+        response.headers['Content-Type'] = 'application/json'
+
+        return response
+
+    # ID token is valid. Get the user's Google Account ID from the decoded token.
+    gplus_id = idinfo['sub']
+
+    # Check that our client's id matches that of the token
+    # returned by Google API's server
+    if idinfo['aud'] != CLIENT_ID:
+        message = "Token's client ID does not match this app's."
+        response = make_response(json.dumps(message), 401)
+        response.headers['Content-Type'] = 'application/json'
+
+        return response
+
+    # Verify that the user's NOT ALREADY LOGGED IN
+
+    # Get the access token stored in the session if there is one
+    stored_token = session.get('token')
+    # Get the user id stored in the session if there is one
+    stored_gplus_id = session.get('gplus_id')
+
+    # Check if there is already an access token in the session
+    # and if so, if the id of the token from the CREDENTIALS OBJECT
+    # matches the id stored in the session
+    if stored_token is not None and gplus_id == stored_gplus_id:
+        print 'Current user is already connected.'
+
+        return make_response(render_template('login_success.html',
+                                             user=serialize_session_user()))
+
+    # If we get this far, the access token is VALID
+    # and it's THE RIGHT ACCESS TOKEN.
+    # The user can be successfully logged in
+
+    # 1. Store the access token in the session
+    session['token'] = token
+    session['gplus_id'] = gplus_id
+
+    # 3. Store user info in the session
+    session['username'] = idinfo['name']
+    session['picture'] = idinfo['picture']
+    session['email'] = idinfo['email']
+
+    # Specify we used Google to sign in
+    session['provider'] = 'google'
+
+    return make_response(render_template('login_success.html',
+                                         user=serialize_session_user()))
+
+
 # HELPERS
 
-#@app.context_processor
-#def inject_categories():
-#    categories = c.query(Category).all()
-#    return dict(categories=categories)
+def serialize_session_user():
+    """Return a dictionary containing a user's info from session."""
+    return {'username': session.get('username'),
+            'email': session.get('email'),
+            'picture': session.get('picture'),
+            'id': session.get('user_id')}
 
 
 if __name__ == '__main__':

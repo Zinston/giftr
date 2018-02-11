@@ -2,8 +2,8 @@
 
 {% block scripts %}
 <!-- For Google OAuth2 -->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 <script src="https://apis.google.com/js/platform.js" async defer></script>
-<script src="{{ url_for('static', filename='gauth.js') }}"></script>
 <meta name="google-signin-client_id" content="176046957719-t1idat59u21k51db3hl56ja3l366nkot.apps.googleusercontent.com">
 <!-- For Facebook OAuth2 -->
 <script src="{{ url_for('static', filename='fbauth.js') }}"></script>
@@ -23,13 +23,37 @@
 		<div class="fb-login-button" data-max-rows="1" data-size="medium" data-button-type="login_with" data-show-faces="false" data-auto-logout-link="false" data-use-continue-as="true" scope="public_profile,email" onlogin="checkLoginState();"></div>
 	</div>
 	<div class="col-md-6 text-center">
-		<div class="g-signin2" data-onsuccess="onSignIn"></div>
+		<div class="g-signin2" data-onsuccess="signinCallback"></div>
 	</div>
 </div>
 
 <div id="result" class="mt-3 text-center"></div>
 
 <script>
+	function signinCallback(googleUser) {
+		auth_result = googleUser.getAuthResponse();
+		if (auth_result.id_token) {
+
+			$('#signin_button').attr('style', 'display: none');
+
+			$.ajax({
+				type: 'POST',
+				url: '/gconnect?state={{STATE}}',
+				processData: false,
+				contentType: 'application/octet-stream; charset=utf-8',
+				data: auth_result.id_token,
+				success: function(result) {
+					if (result) {
+						successful_login(result);
+					} else if (auth_result['error']) {
+						console.log('There was an error: ' + auth_result['error']);
+					} else {
+						$('#result').html('Failed to make a server side call. Check your configuration and console.');
+					};
+				}
+			})
+		};
+	}
 	function successful_login(html_response) {
 		$('#result').html(html_response)
 		setTimeout(function() {
