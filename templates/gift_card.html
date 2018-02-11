@@ -1,0 +1,17 @@
+<div class="card card-block mx-auto">
+	{% if gift.picture %}
+	<img class="card-img-top img-fluid" src="{{ gift.picture }}">
+		<a href="#" class="btn btn-success">Claim</a>
+	{% endif %}
+	<div class="card-body">
+		<h5 class="card-title">{{ gift.name }}</h5>
+		<p class="card-text">{{ gift.description }}</p>
+		<p class="card-text"><small class="text-muted">Created on {{ gift.created_at.strftime('%d %b %Y at %H:%M') }}
+			{% if gift.updated_at %}<br>Last updated on {{ gift.updated_at.strftime('%d %b %Y at %H:%M') }}{% endif %}</small></p>
+		<div class="links text-center">
+			<a href="{{ url_for('get_claims', g_id=gift.id) }}" class="btn btn-outline-info">Claims</a>
+			<a href="#" class="btn btn-outline-warning">Edit</a>
+			<a href="#" class="btn btn-outline-danger">Delete</a>
+		</div>
+	</div>
+</div>

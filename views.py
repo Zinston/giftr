@@ -77,7 +77,7 @@ def add_gift():
     c.add(gift)
     c.commit()
 
-    return redirect(url_for('get_gifts',
+    return redirect(url_for('get_gift_byid',
                             g_id=gift.id))
 
 
