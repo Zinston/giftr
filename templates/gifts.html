@@ -7,6 +7,11 @@
     	<input type='text' name='name' placeholder='name'>
     	<input type='text' name='picture' placeholder='picture url'>
     	<textarea name='description' placeholder='Description'></textarea>
+    	<select name="category">
+    		{% for category in categories %}
+    		<option value="{{ category.id }}">{{ category.name }}</option>
+    		{% endfor %}
+    	</select>
         <input type='submit'>
     </form>
 </section>

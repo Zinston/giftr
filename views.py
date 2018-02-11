@@ -38,16 +38,19 @@ app = Flask(__name__)
 @app.route('/gifts', methods=['GET'])
 def get_gifts():
     gifts = c.query(Gift).all()
+    categories = c.query(Category).all()
 
     return render_template('gifts.html',
-                           gifts=gifts)
+                           gifts=gifts,
+                           categories=categories)
 
 
 @app.route('/gifts', methods=['POST'])
 def add_gift():
     gift = Gift(name=request.form.get('name'),
                 picture=request.form.get('picture'),
-                description=request.form.get('description'))
+                description=request.form.get('description'),
+                category_id=request.form.get('category'))
     c.add(gift)
     c.commit()
 
@@ -58,9 +61,11 @@ def add_gift():
 @app.route('/gifts/<int:g_id>', methods=['GET'])
 def get_gift_byid(g_id):
     gift = c.query(Gift).filter_by(id=g_id).first()
+    categories = c.query(Category).all()
 
     return render_template('gift.html',
-                           gift=gift)
+                           gift=gift,
+                           categories=categories)
 
     
 @app.route('/gifts/<int:g_id>/edit', methods=['POST'])
@@ -70,6 +75,7 @@ def edit_gift(g_id):
     gift.name = request.form.get('name')
     gift.picture = request.form.get('picture')
     gift.description = request.form.get('description')
+    gift.category_id = request.form.get('category')
 
     c.add(gift)
     c.commit()
