@@ -35,6 +35,7 @@ app = Flask(__name__)
 # ROUTES
 # Client routes
 # Gifts
+@app.route('/', methods=['GET'])
 @app.route('/gifts', methods=['GET'])
 def get_gifts():
     categories = c.query(Category).all()
