@@ -29,7 +29,10 @@
 
 <div class="list-group">
     {% for claim in claims %}
-    <a href="{{ url_for('get_claim_byid', g_id=claim.gift_id, c_id=claim.id) }}" class="list-group-item list-group-item-action">{{ claim.message }}</a>
+    <a href="{{ url_for('get_claim_byid', g_id=claim.gift_id, c_id=claim.id) }}" class="list-group-item list-group-item-action">
+    	<span class="float-left">{{ claim.creator.name }}</span>
+    	<span class="float-right">{{ claim.created_at.strftime('%d %b %Y at %H:%M') }}</span>
+    </a>
     {% endfor %}
 </div>
 {% endblock %}
