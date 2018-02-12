@@ -32,6 +32,9 @@ from oauth2client.client import (flow_from_clientsecrets,
                                  FlowExchangeError)
 import random, string, json, requests
 
+# For making decorators
+from functools import wraps
+
 # Bind database
 engine = create_engine('sqlite:///giftr.db')
 Base.metadata.bind = engine
@@ -47,6 +50,17 @@ google_client_secrets_f = open('google_client_secrets.json', 'r')
 google_client_secrets = google_client_secrets_f.read()
 google_client_secrets_json = json.loads(google_client_secrets)
 CLIENT_ID = google_client_secrets_json['web']['client_id']
+
+
+# DECORATORS
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'username' not in session:
+            flash('You need to be logged in to see that page.')
+            return redirect(url_for('show_login'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 
 # ROUTES
@@ -79,6 +93,7 @@ def get_gifts():
 
 
 @app.route('/gifts/add', methods=['GET'])
+@login_required
 def show_add_gift():
     categories = c.query(Category).all()
     
@@ -86,6 +101,7 @@ def show_add_gift():
                            categories=categories)
 
 @app.route('/gifts/add', methods=['POST'])
+@login_required
 def add_gift():
     gift = Gift(name=request.form.get('name'),
                 picture=request.form.get('picture'),
@@ -111,6 +127,7 @@ def get_gift_byid(g_id):
 
 
 @app.route('/gifts/<int:g_id>/edit', methods=['GET'])
+@login_required
 def show_edit_gift(g_id):
     gift = c.query(Gift).filter_by(id=g_id).first()
     categories = c.query(Category).all()
@@ -121,6 +138,7 @@ def show_edit_gift(g_id):
 
     
 @app.route('/gifts/<int:g_id>/edit', methods=['POST'])
+@login_required
 def edit_gift(g_id):
     gift = c.query(Gift).filter_by(id=g_id).first()
 
@@ -139,6 +157,7 @@ def edit_gift(g_id):
 
 
 @app.route('/gifts/<int:g_id>/delete', methods=['GET'])
+@login_required
 def show_delete_gift(g_id):
     gift = c.query(Gift).filter_by(id=g_id).first()
 
@@ -147,6 +166,7 @@ def show_delete_gift(g_id):
 
 
 @app.route('/gifts/<int:g_id>/delete', methods=['POST'])
+@login_required
 def delete_gift(g_id):
     gift = c.query(Gift).filter_by(id=g_id).first()
 
@@ -184,6 +204,7 @@ def get_claims(g_id):
 
 
 @app.route('/gifts/<int:g_id>/claims/add', methods=['GET'])
+@login_required
 def show_add_claim(g_id):
     gift = c.query(Gift).filter_by(id=g_id).first()
 
@@ -192,6 +213,7 @@ def show_add_claim(g_id):
 
 
 @app.route('/gifts/<int:g_id>/claims', methods=['POST'])
+@login_required
 def add_claim(g_id):
     claim = Claim(message=request.form.get('message'),
                   gift_id=g_id)
@@ -215,6 +237,7 @@ def get_claim_byid(g_id, c_id):
 
 
 @app.route('/gifts/<int:g_id>/claims/<int:c_id>/edit', methods=['GET'])
+@login_required
 def show_edit_claim(g_id, c_id):
     claim = c.query(Claim).filter_by(id=c_id).first()
 
@@ -223,6 +246,7 @@ def show_edit_claim(g_id, c_id):
 
 
 @app.route('/gifts/<int:g_id>/claims/<int:c_id>/edit', methods=['POST'])
+@login_required
 def edit_claim(g_id, c_id):
     claim = c.query(Claim).filter_by(id=c_id).first()
 
@@ -239,6 +263,7 @@ def edit_claim(g_id, c_id):
 
 
 @app.route('/gifts/<int:g_id>/claims/<int:c_id>/delete', methods=['GET'])
+@login_required
 def show_delete_claim(g_id, c_id):
     claim = c.query(Claim).filter_by(id=c_id).first()
 
@@ -247,6 +272,7 @@ def show_delete_claim(g_id, c_id):
 
 
 @app.route('/gifts/<int:g_id>/claims/<int:c_id>/delete', methods=['POST'])
+@login_required
 def delete_claim(g_id, c_id):
     claim = c.query(Claim).filter_by(id=c_id).first()
 
@@ -282,11 +308,13 @@ def get_categories():
 
 
 @app.route('/categories/add', methods=['GET'])
+@login_required
 def show_add_category():
     return render_template('add_category.html')
 
 
 @app.route('/categories', methods=['POST'])
+@login_required
 def add_category():
     category = Category(name=request.form.get('name'),
                         picture=request.form.get('picture'),
@@ -310,6 +338,7 @@ def get_category_byid(cat_id):
 
 
 @app.route('/categories/<int:cat_id>/edit', methods=['GET'])
+@login_required
 def show_edit_category(cat_id):
     category = c.query(Category).filter_by(id=cat_id).first()
 
@@ -318,6 +347,7 @@ def show_edit_category(cat_id):
 
 
 @app.route('/categories/<int:cat_id>', methods=['POST'])
+@login_required
 def edit_category(cat_id):
     category = c.query(Category).filter_by(id=cat_id).first()
 
@@ -335,6 +365,7 @@ def edit_category(cat_id):
 
 
 @app.route('/categories/<int:cat_id>/delete', methods=['GET'])
+@login_required
 def show_delete_category(cat_id):
     category = c.query(Category).filter_by(id=cat_id).first()
 
@@ -343,6 +374,7 @@ def show_delete_category(cat_id):
 
 
 @app.route('/categories/<int:cat_id>', methods=['POST'])
+@login_required
 def delete_category(cat_id):
     category = c.query(Category).filter_by(id=cat_id).first()
 
