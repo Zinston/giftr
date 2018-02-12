@@ -4,7 +4,7 @@
 		<img class="card-img-top img-fluid" src="{{ gift.picture }}">
 	</div>
 	{% endif %}
-	{% if session.username %}
+	{% if session.username and gift.creator_id != session.user_id %}
 	<a href="{{ url_for('show_add_claim', g_id=gift.id) }}" class="btn btn-success">Claim</a>
 	{% endif %}
 	<div class="card-body">
@@ -26,7 +26,7 @@
 			{% elif page == "gift" %}
 			<a href="{{ url_for('get_claims', g_id=gift.id) }}" class="btn btn-outline-info">Claims</a>
 			{% endif %}
-			{% if session.username %}
+			{% if session.username and gift.creator_id == session.user_id %}
 			<a href="{{ url_for('show_edit_gift', g_id=gift.id) }}" class="btn btn-outline-warning">Edit</a>
 			<a href="{{ url_for('show_delete_gift', g_id=gift.id) }}" class="btn btn-outline-danger">Delete</a>
 			{% endif %}
