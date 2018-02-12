@@ -26,8 +26,11 @@
 	{% if category.updated_at %}Last updated on {{ category.updated_at.strftime('%d %b %Y at %H:%M') }}<br>{% endif %}
 	Created on {{ category.created_at.strftime('%d %b %Y at %H:%M') }}
 </small>
+
+{% if session.username %}
 <br>
 <br>
 <a href="{{ url_for('show_edit_category', cat_id=category.id) }}" class="btn btn-outline-warning">Edit</a>
 <a href="{{ url_for('show_delete_category', cat_id=category.id) }}" class="btn btn-outline-danger">Delete</a>
+{% endif %}
 {% endblock %}

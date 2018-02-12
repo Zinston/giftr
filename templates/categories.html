@@ -14,10 +14,12 @@
 {% endblock %}
 
 {% block body %}
+{% if session.username %}
 <div class="text-center">
     <a href="{{ url_for('show_add_category') }}" class="btn btn-success btn-lg">Add a category</a>
 <div>
 <br>
+{% endif %}
 <div class="list-group">
     {% for category in categories %}
     <a href="{{ url_for('get_category_byid', cat_id=category.id) }}" class="list-group-item list-group-item-action">{{ category.name }}</a>

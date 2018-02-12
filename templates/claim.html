@@ -28,8 +28,11 @@
 	{% if claim.updated_at %}Last updated on {{ claim.updated_at.strftime('%d %b %Y at %H:%M') }}<br>{% endif %}
 	Created on {{ claim.created_at.strftime('%d %b %Y at %H:%M') }}
 </small>
+
+{% if session.username %}
 <br>
 <br>
 <a href="{{ url_for('show_edit_claim', g_id=claim.gift_id, c_id=claim.id) }}" class="btn btn-outline-warning">Edit</a>
 <a href="{{ url_for('show_delete_claim', g_id=claim.gift_id, c_id=claim.id) }}" class="btn btn-outline-danger">Delete</a>
+{% endif %}
 {% endblock %}

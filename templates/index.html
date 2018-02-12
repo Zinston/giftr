@@ -18,7 +18,9 @@
 			<div class="navbar-nav">
 				<a class="nav-item nav-link" href="{{ url_for('get_gifts') }}">Home</a>
 				<a class="nav-item nav-link" href="{{ url_for('get_categories') }}">Categories</a>
+				{% if session.username %}
 				<a class="nav-item nav-link" href="{{ url_for('show_add_gift') }}">Give something</a>
+				{% endif %}
 			</div>
 
 			{% block nav %}

@@ -19,8 +19,10 @@
 		</p>
 		<div class="links text-center">
 			<a href="{{ url_for('get_claims', g_id=gift.id) }}" class="btn btn-outline-info">Claims</a>
+			{% if session.username %}
 			<a href="{{ url_for('show_edit_gift', g_id=gift.id) }}" class="btn btn-outline-warning">Edit</a>
 			<a href="{{ url_for('show_delete_gift', g_id=gift.id) }}" class="btn btn-outline-danger">Delete</a>
+			{% endif %}
 		</div>
 	</div>
 </div>
