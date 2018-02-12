@@ -2,7 +2,7 @@
 
 # For webserver
 from BaseHTTPServer import (BaseHTTPRequestHandler,
-                           HTTPServer)
+                            HTTPServer)
 import cgi  # Common Gateway Interface
 
 # For CRUD
@@ -28,7 +28,11 @@ from flask import (Flask,
 # For OAuth
 from oauth2client.client import (flow_from_clientsecrets,
                                  FlowExchangeError)
-import random, string, json, requests, httplib2
+import random
+import string
+import json
+import requests
+import httplib2
 
 # For making decorators
 from functools import wraps
@@ -73,7 +77,7 @@ def get_gifts():
     try:
         req_cat = int(req_cat)
         if req_cat > 0 and req_cat <= len(categories):
-            gifts = c.query(Gift).filter_by(category_id=req_cat).order_by(Gift.created_at.desc()).all()
+            gifts = c.query(Gift).filter_by(category_id=req_cat).order_by(Gift.created_at.desc()).all()  # noqa
             req_cat = c.query(Category).filter_by(id=req_cat).first()
 
             return render_template('gifts.html',
@@ -83,7 +87,7 @@ def get_gifts():
                                    page="gifts")
     except:
         pass
-    
+
     gifts = c.query(Gift).order_by(Gift.created_at.desc()).all()
 
     return render_template('gifts.html',
@@ -96,9 +100,10 @@ def get_gifts():
 @login_required
 def show_add_gift():
     categories = c.query(Category).all()
-    
+
     return render_template('add_gift.html',
                            categories=categories)
+
 
 @app.route('/gifts/add', methods=['POST'])
 @login_required
@@ -132,7 +137,7 @@ def get_gift_byid(g_id):
 @login_required
 def show_edit_gift(g_id):
     gift = c.query(Gift).filter_by(id=g_id).first()
-    
+
     if gift.creator_id != session.get('user_id'):
         flash('You have to be the creator of that gift to see that page.')
         return redirect(url_for('get_gift_byid',
@@ -144,7 +149,7 @@ def show_edit_gift(g_id):
                            gift=gift,
                            categories=categories)
 
-    
+
 @app.route('/gifts/<int:g_id>/edit', methods=['POST'])
 @login_required
 def edit_gift(g_id):
@@ -489,7 +494,8 @@ def gconnect():
         # The credentials object contains the ACCESS TOKEN for the server
 
         # 1. Create oauth_flow object with the client's SECRET KEY info in it
-        oauth_flow = flow_from_clientsecrets('google_client_secrets.json', scope='')
+        oauth_flow = flow_from_clientsecrets('google_client_secrets.json',
+                                             scope='')
         # 2. Specify that this is the one-time code flow
         # the server will be sending off
         oauth_flow.redirect_uri = 'postmessage'
@@ -609,7 +615,8 @@ def gconnect():
         user_id = create_user_from_session()
         flash('Welcom %s! You successfully signed up!' % session['username'])
     else:
-        flash('Welcome %s! You were successfully logged in!' % session['username'])
+        flash("""Welcome %s!
+                 You were successfully logged in!""" % session['username'])
 
     # 3. Store the user id in the session
     session['user_id'] = user_id
@@ -634,17 +641,18 @@ def fbconnect():
     # 3. Exchange client token for long-lived server-side token
     # with GET /oauth/access_token?grant_type=fb_exchange_token&client_id=
     # {app-id}&client_secret={app-secret}&fb_exchange_token={short-lived-token}
-    app_id = json.loads(open('fb_client_secrets.json', 'r').read())['web']['app_id']
-    app_secret = json.loads(open('fb_client_secrets.json', 'r').read())['web']['app_secret']
+    fb_info = json.loads(open('fb_client_secrets.json', 'r').read())
+    app_id = fb_info['web']['app_id']
+    app_secret = fb_info['web']['app_secret']
     url = 'https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id=%s&client_secret=%s&fb_exchange_token=%s' % (app_id, app_secret, access_token)  # noqa
     h = httplib2.Http()
     result = h.request(url, 'GET')[1]
 
     # 4. Use the long-lived token to get user info from API
     # extract access token from result
-    token = eval(result).get('access_token') ## CHANGED FROM UDACITY
+    token = eval(result).get('access_token')
 
-    url = 'https://graph.facebook.com/v2.8/me?access_token=%s&fields=name,id,email,picture' % token
+    url = 'https://graph.facebook.com/v2.8/me?access_token=%s&fields=name,id,email,picture' % token  # noqa
     h = httplib2.Http()
     result = h.request(url, 'GET')[1]
     data = json.loads(result)
@@ -668,7 +676,8 @@ def fbconnect():
         user_id = create_user_from_session()
         flash('Welcom %s! You successfully signed up!' % session['username'])
     else:
-        flash('Welcome %s! You were successfully logged in!' % session['username'])
+        flash("""Welcome %s!
+                 You were successfully logged in!""" % session['username'])
 
     # 4.3. Store the user id in the session
     session['user_id'] = user_id
@@ -805,7 +814,7 @@ def fbdisconnect():
 
 
 # API Routes
-@app.route('/gifts/json')
+@app.route('/api/gifts')
 def get_gifts_json():
     """Return the gifts in json."""
     req_cat = request.args.get('cat')
@@ -813,12 +822,12 @@ def get_gifts_json():
     try:
         req_cat = int(req_cat)
         if req_cat > 0 and req_cat <= len(categories):
-            gifts = c.query(Gift).filter_by(category_id=req_cat).order_by(Gift.created_at.desc()).all()
+            gifts = c.query(Gift).filter_by(category_id=req_cat).order_by(Gift.created_at.desc()).all()  # noqa
         else:
             gifts = c.query(Gift).order_by(Gift.created_at.desc()).all()
     except:
         gifts = c.query(Gift).order_by(Gift.created_at.desc()).all()
-   
+
     # Serialize
     serialized_gifts = [gift.serialize for gift in gifts]
 
@@ -826,7 +835,7 @@ def get_gifts_json():
     return jsonify(gifts=serialized_gifts)
 
 
-@app.route('/gifts/<int:g_id>/json')
+@app.route('/api/gifts/<int:g_id>')
 def get_gift_json(g_id):
     """Return a gift in json."""
     # Query database
