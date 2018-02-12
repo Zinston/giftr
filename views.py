@@ -804,6 +804,46 @@ def fbdisconnect():
     return response
 
 
+# API Routes
+@app.route('/gifts/json')
+def get_gifts_json():
+    """Return the gifts in json."""
+    req_cat = request.args.get('cat')
+    categories = c.query(Category).all()
+    try:
+        req_cat = int(req_cat)
+        if req_cat > 0 and req_cat <= len(categories):
+            gifts = c.query(Gift).filter_by(category_id=req_cat).order_by(Gift.created_at.desc()).all()
+        else:
+            gifts = c.query(Gift).order_by(Gift.created_at.desc()).all()
+    except:
+        gifts = c.query(Gift).order_by(Gift.created_at.desc()).all()
+   
+    # Serialize
+    serialized_gifts = [gift.serialize for gift in gifts]
+
+    # Jsonify
+    return jsonify(gifts=serialized_gifts)
+
+
+@app.route('/gifts/<int:g_id>/json')
+def get_gift_json(g_id):
+    """Return a gift in json."""
+    # Query database
+    gift = c.query(Gift).filter_by(id=g_id).first()
+    claims = c.query(Claim).filter_by(gift_id=g_id).all()
+
+    # Serialize
+    serialized_gift = gift.serialize
+    serialized_claims = [claim.serialize for claim in claims]
+
+    # Append the items to the restaurant
+    serialized_gift['claims'] = serialized_claims
+
+    # Jsonify
+    return jsonify({'gift': serialized_gift})
+
+
 # HELPERS
 
 def create_user_from_session():
