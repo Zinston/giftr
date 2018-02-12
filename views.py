@@ -56,6 +56,7 @@ CLIENT_ID = google_client_secrets_json['web']['client_id']
 
 # DECORATORS
 def login_required(f):
+    """Redirect to login page if the user is not logged in (decorator)."""
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'username' not in session:
@@ -71,6 +72,7 @@ def login_required(f):
 @app.route('/', methods=['GET'])
 @app.route('/gifts', methods=['GET'])
 def get_gifts():
+    """Render all gifts or gifts of category id "cat" if query."""
     categories = c.query(Category).all()
 
     req_cat = request.args.get('cat')
@@ -99,6 +101,10 @@ def get_gifts():
 @app.route('/gifts/add', methods=['GET'])
 @login_required
 def show_add_gift():
+    """Render form to add a gift.
+
+    Login required.
+    """
     categories = c.query(Category).all()
 
     return render_template('add_gift.html',
@@ -108,6 +114,10 @@ def show_add_gift():
 @app.route('/gifts/add', methods=['POST'])
 @login_required
 def add_gift():
+    """Add a gift to the database with POST.
+
+    Login required.
+    """
     gift = Gift(name=request.form.get('name'),
                 picture=request.form.get('picture'),
                 description=request.form.get('description'),
@@ -124,6 +134,13 @@ def add_gift():
 
 @app.route('/gifts/<int:g_id>', methods=['GET'])
 def get_gift_byid(g_id):
+    """Render a gift of id g_id.
+
+    Login required.
+
+    Argument:
+    g_id (int): the id of the desired gift.
+    """
     gift = c.query(Gift).filter_by(id=g_id).first()
     categories = c.query(Category).all()
 
@@ -136,6 +153,14 @@ def get_gift_byid(g_id):
 @app.route('/gifts/<int:g_id>/edit', methods=['GET'])
 @login_required
 def show_edit_gift(g_id):
+    """Render an edit form for a gift of id g_id.
+
+    Login required.
+    One has to be the creator of the gift to access this.
+
+    Argument:
+    g_id (int): the id of the desired gift.
+    """
     gift = c.query(Gift).filter_by(id=g_id).first()
 
     if gift.creator_id != session.get('user_id'):
@@ -153,6 +178,14 @@ def show_edit_gift(g_id):
 @app.route('/gifts/<int:g_id>/edit', methods=['POST'])
 @login_required
 def edit_gift(g_id):
+    """Edit a gift of id g_id with POST.
+
+    Login required.
+    One has to be the creator of the gift to access this.
+
+    Argument:
+    g_id (int): the id of the desired gift.
+    """
     gift = c.query(Gift).filter_by(id=g_id).first()
 
     if gift.creator_id != session.get('user_id'):
@@ -177,6 +210,14 @@ def edit_gift(g_id):
 @app.route('/gifts/<int:g_id>/delete', methods=['GET'])
 @login_required
 def show_delete_gift(g_id):
+    """Render a delete form for a gift of id g_id.
+
+    Login required.
+    One has to be the creator of the gift to access this.
+
+    Argument:
+    g_id (int): the id of the desired gift.
+    """
     gift = c.query(Gift).filter_by(id=g_id).first()
 
     if gift.creator_id != session.get('user_id'):
@@ -191,6 +232,14 @@ def show_delete_gift(g_id):
 @app.route('/gifts/<int:g_id>/delete', methods=['POST'])
 @login_required
 def delete_gift(g_id):
+    """Delete a gift of id g_id with POST.
+
+    Login required.
+    One has to be the creator of the gift to access this.
+
+    Argument:
+    g_id (int): the id of the desired gift.
+    """
     gift = c.query(Gift).filter_by(id=g_id).first()
 
     if gift.creator_id != session.get('user_id'):
@@ -215,6 +264,7 @@ def delete_gift(g_id):
 # Claims
 @app.route('/gifts/claims', methods=['GET'])
 def get_all_claims():
+    """Render all claims in the database."""
     claims = c.query(Claim).all()
 
     return render_template('claims.html',
@@ -223,6 +273,11 @@ def get_all_claims():
 
 @app.route('/gifts/<int:g_id>/claims', methods=['GET'])
 def get_claims(g_id):
+    """Render all claims on a gift of id g_id.
+
+    Argument:
+    g_id (int): the id of the desired gift.
+    """
     claims = c.query(Claim).filter_by(gift_id=g_id).all()
     gift = c.query(Gift).filter_by(id=g_id).first()
 
@@ -234,6 +289,14 @@ def get_claims(g_id):
 @app.route('/gifts/<int:g_id>/claims/add', methods=['GET'])
 @login_required
 def show_add_claim(g_id):
+    """Render form to add a claim on a gift of id g_id.
+
+    Login required.
+    One has to NOT be the creator of the gift to access this.
+
+    Argument:
+    g_id (int): the id of the desired gift.
+    """
     gift = c.query(Gift).filter_by(id=g_id).first()
 
     if gift.creator_id == session.get('user_id'):
@@ -248,6 +311,14 @@ def show_add_claim(g_id):
 @app.route('/gifts/<int:g_id>/claims', methods=['POST'])
 @login_required
 def add_claim(g_id):
+    """Add a claim on a gift of id g_id to the database with POST.
+
+    Login required.
+    One has to NOT be the creator of the gift to access this.
+
+    Argument:
+    g_id (int): the id of the desired gift.
+    """
     gift = c.query(Gift).filter_by(id=g_id).first()
 
     if gift.creator_id == session.get('user_id'):
@@ -271,6 +342,14 @@ def add_claim(g_id):
 
 @app.route('/gifts/<int:g_id>/claims/<int:c_id>', methods=['GET'])
 def get_claim_byid(g_id, c_id):
+    """Render a claim of id c_id on a gift of id g_id.
+
+    Login required.
+
+    Arguments:
+    g_id (int): the id of the desired gift.
+    c_id (int): the id of the desired claim.
+    """
     claim = c.query(Claim).filter_by(id=c_id).first()
 
     return render_template('claim.html',
@@ -280,6 +359,15 @@ def get_claim_byid(g_id, c_id):
 @app.route('/gifts/<int:g_id>/claims/<int:c_id>/edit', methods=['GET'])
 @login_required
 def show_edit_claim(g_id, c_id):
+    """Render edit form for a claim of id c_id on a gift of id g_id.
+
+    Login required.
+    One has to be the creator of the gift to access this.
+
+    Arguments:
+    g_id (int): the id of the desired gift.
+    c_id (int): the id of the desired claim.
+    """
     claim = c.query(Claim).filter_by(id=c_id).first()
 
     if claim.creator_id != session.get('user_id'):
@@ -294,6 +382,14 @@ def show_edit_claim(g_id, c_id):
 @app.route('/gifts/<int:g_id>/claims/<int:c_id>/edit', methods=['POST'])
 @login_required
 def edit_claim(g_id, c_id):
+    """Edit a claim of id c_id on a gift of id g_id with POST.
+
+    Login required.
+    One has to be the creator of the gift to access this.
+
+    Arguments:
+    g_id (int): the id of the desired gift.
+    """
     claim = c.query(Claim).filter_by(id=c_id).first()
 
     if claim.creator_id != session.get('user_id'):
@@ -316,6 +412,15 @@ def edit_claim(g_id, c_id):
 @app.route('/gifts/<int:g_id>/claims/<int:c_id>/delete', methods=['GET'])
 @login_required
 def show_delete_claim(g_id, c_id):
+    """Render delete form for a claim with c_id on a gift with g_id.
+
+    Login required.
+    One has to be the creator of the gift to access this.
+
+    Arguments:
+    g_id (int): the id of the desired gift.
+    c_id (int): the id of the desired claim.
+    """
     claim = c.query(Claim).filter_by(id=c_id).first()
 
     if claim.creator_id != session.get('user_id'):
@@ -330,6 +435,14 @@ def show_delete_claim(g_id, c_id):
 @app.route('/gifts/<int:g_id>/claims/<int:c_id>/delete', methods=['POST'])
 @login_required
 def delete_claim(g_id, c_id):
+    """Delete a claim of id c_id on a gift of id g_id with POST.
+
+    Login required.
+    One has to be the creator of the gift to access this.
+
+    Arguments:
+    g_id (int): the id of the desired gift.
+    """
     claim = c.query(Claim).filter_by(id=c_id).first()
 
     if claim.creator_id != session.get('user_id'):
@@ -348,20 +461,10 @@ def delete_claim(g_id, c_id):
                             g_id=g_id))
 
 
-# Users
-@app.route('/users', methods=['GET', 'POST'])
-def cr_users():
-    return 'GET or POST users'
-
-
-@app.route('/users/<int:u_id>', methods=['GET', 'UPDATE', 'DELETE'])
-def rud_users(u_id):
-    return 'GET, UPDATE or DELETE user %s' % u_id
-
-
 # Categories
 @app.route('/categories', methods=['GET'])
 def get_categories():
+    """Render all claims in the database."""
     categories = c.query(Category).all()
 
     return render_template('categories.html',
@@ -371,12 +474,20 @@ def get_categories():
 @app.route('/categories/add', methods=['GET'])
 @login_required
 def show_add_category():
+    """Render form to add a category.
+
+    Login required.
+    """
     return render_template('add_category.html')
 
 
 @app.route('/categories', methods=['POST'])
 @login_required
 def add_category():
+    """Add a category to the database with POST.
+
+    Login required.
+    """
     category = Category(name=request.form.get('name'),
                         picture=request.form.get('picture'),
                         description=request.form.get('description'))
@@ -392,6 +503,11 @@ def add_category():
 
 @app.route('/categories/<int:cat_id>', methods=['GET'])
 def get_category_byid(cat_id):
+    """Render a category of id cat_id.
+
+    Argument:
+    cat_id (int): the id of the desired category.
+    """
     category = c.query(Category).filter_by(id=cat_id).first()
 
     return render_template('category.html',
@@ -401,6 +517,13 @@ def get_category_byid(cat_id):
 @app.route('/categories/<int:cat_id>/edit', methods=['GET'])
 @login_required
 def show_edit_category(cat_id):
+    """Render edit form for a category of id cat_id.
+
+    Login required.
+
+    Arguments:
+    cat_id (int): the id of the desired category.
+    """
     category = c.query(Category).filter_by(id=cat_id).first()
 
     return render_template('edit_category.html',
@@ -410,6 +533,13 @@ def show_edit_category(cat_id):
 @app.route('/categories/<int:cat_id>', methods=['POST'])
 @login_required
 def edit_category(cat_id):
+    """Edit a category of id cat_id with POST.
+
+    Login required.
+
+    Argument:
+    cat_id (int): the id of the desired category.
+    """
     category = c.query(Category).filter_by(id=cat_id).first()
 
     category.name = request.form.get('name')
@@ -428,6 +558,13 @@ def edit_category(cat_id):
 @app.route('/categories/<int:cat_id>/delete', methods=['GET'])
 @login_required
 def show_delete_category(cat_id):
+    """Render delete form for a category of id cat_id.
+
+    Login required.
+
+    Arguments:
+    cat_id (int): the id of the desired category.
+    """
     category = c.query(Category).filter_by(id=cat_id).first()
 
     return render_template('delete_category.html',
@@ -437,6 +574,13 @@ def show_delete_category(cat_id):
 @app.route('/categories/<int:cat_id>', methods=['POST'])
 @login_required
 def delete_category(cat_id):
+    """Delete a category of id cat_id with POST.
+
+    Login required.
+
+    Argument:
+    cat_id (int): the id of the desired category.
+    """
     category = c.query(Category).filter_by(id=cat_id).first()
 
     c.delete(category)
@@ -453,7 +597,7 @@ def delete_category(cat_id):
 
 @app.route('/login', methods=['GET'])
 def show_login():
-    """Get the login page with a generated random state variable."""
+    """Render login page with a generated random state variable."""
     # If the user is already logged in, redirect them.
     if 'username' in session:
         flash("You're already logged in. Disconnect first.")
@@ -627,7 +771,7 @@ def gconnect():
 
 @app.route('/fbconnect', methods=['GET', 'POST'])
 def fbconnect():
-    """Login and/or register a user using Google OAuth."""
+    """Login and/or register a user using Facebook OAuth."""
     # 1. Check if the posted STATE matches the session state
     if request.args.get('state') != session['state']:
         response = make_response(json.dumps('Invalid state parameter'), 401)
@@ -690,6 +834,7 @@ def fbconnect():
 
 @app.route('/disconnect')
 def disconnect():
+    """Redirect to appropriate disconnect function and clear session."""
     # If there's a user...
     if 'provider' in session:
         # If they logged in through GOOGLE
@@ -773,6 +918,7 @@ def gdisconnect():
 
 @app.route('/fbdisconnect')
 def fbdisconnect():
+    """Disconnect a user using Facebook OAuth."""
     # PART 1: Check that there is a user to disconnect
     # -------
 
@@ -837,7 +983,11 @@ def get_gifts_json():
 
 @app.route('/api/gifts/<int:g_id>')
 def get_gift_json(g_id):
-    """Return a gift in json."""
+    """Return a gift of id g_id in json.
+
+    Argument:
+    g_id (int): the desired gift.
+    """
     # Query database
     gift = c.query(Gift).filter_by(id=g_id).first()
     claims = c.query(Claim).filter_by(gift_id=g_id).all()
@@ -856,6 +1006,7 @@ def get_gift_json(g_id):
 # HELPERS
 
 def create_user_from_session():
+    """Add a user to database from session, return its database id."""
     # Create a new User in db with the info from the session
     new_user = User(name=session.get('username'),
                     email=session.get('email'),
@@ -871,6 +1022,11 @@ def create_user_from_session():
 
 
 def get_user_id(email):
+    """Return a user's database id from their email address.
+
+    Argument:
+    email (str): the user's email address.
+    """
     try:
         user = c.query(User).filter_by(email=email).one()
         return user.id
