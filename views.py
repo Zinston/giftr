@@ -26,11 +26,9 @@ from flask import (Flask,
                    make_response)
 
 # For OAuth
-from google.oauth2 import id_token
-from google.auth.transport import requests as g_requests
 from oauth2client.client import (flow_from_clientsecrets,
                                  FlowExchangeError)
-import random, string, json, requests
+import random, string, json, requests, httplib2
 
 # For making decorators
 from functools import wraps
@@ -423,75 +421,128 @@ def gconnect():
 
         return response
 
-    # Get the token sent through ajax
-    token = request.data
+    # PART 1: Getting the credentials object
+    # -------
 
-    # Verify it
+    # Get the ONE-TIME-USE CODE sent through ajax
+    code = request.data
+
     try:
-        # Specify the CLIENT_ID of the app that accesses the backend:
-        idinfo = id_token.verify_oauth2_token(token, g_requests.Request(), CLIENT_ID)
+        # Try and upgrade the authorization code into a CREDENTIALS OBJECT
+        # (Exchange it via oauth2client.client)
+        # The credentials object contains the ACCESS TOKEN for the server
 
-        if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
-            # Wrong issuer
-            message = 'Wrong issuer.'
-            response = make_response(json.dumps(message), 401)
-            response.headers['Content-Type'] = 'application/json'
+        # 1. Create oauth_flow object with the client's SECRET KEY info in it
+        oauth_flow = flow_from_clientsecrets('google_client_secrets.json', scope='')
+        # 2. Specify that this is the one-time code flow
+        # the server will be sending off
+        oauth_flow.redirect_uri = 'postmessage'
+        # 3. Make the exchange, using the ONE-TIME-USE CODE
+        # Exchanges an authorization code with a CREDENTIALS OBJECT
+        credentials = oauth_flow.step2_exchange(code)
 
-            return response
-
-    except ValueError:
-        # Invalid token
-        message = 'Invalid token.'
+    except FlowExchangeError:
+        message = 'Failed to upgrade the authorization code.'
         response = make_response(json.dumps(message), 401)
         response.headers['Content-Type'] = 'application/json'
 
         return response
 
-    # ID token is valid. Get the user's Google Account ID from the decoded token.
-    gplus_id = idinfo['sub']
+    # PART 2: Verifying the validity of the credentials
+    # -------
+
+    # Have GOOGLE verify that the access token is valid
+
+    # 1. Get ACCESS TOKEN from credentials
+    access_token = credentials.access_token
+    # 2. Get the URL for GOOGLE access token checking
+    url = ('https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=%s' % access_token)  # noqa
+    # 3. Create a json GET request with the URL
+    # and store the result of that request in gapi_tokeninfo
+    h = httplib2.Http()
+    gapi_tokeninfo = json.loads(h.request(url, 'GET')[1])
+
+    # Check if Google API's server's access token verification
+    # returned an ERROR
+    if gapi_tokeninfo.get('error') is not None:
+        response = make_response(json.dumps(gapi_tokeninfo.get('error')), 500)
+        response.headers['Content-Type'] = 'application/json'
+
+        return response
+
+    # If we get this far, the access token is VALID
+    # Now we check if it's THE RIGHT ACCESS TOKEN
+
+    # 1. Verify that the access token is used FOR THE INTENDED USER
+
+    # Get the id of the token from the CREDENTIALS OBJECT
+    gplus_id = credentials.id_token['sub']
+
+    # Check that it matches the id of the token returned by Google API's server
+    if gapi_tokeninfo['user_id'] != gplus_id:
+        message = "Token's user ID doesn't match given user ID."
+        response = make_response(json.dumps(message), 401)
+        response.headers['Content-Type'] = 'application/json'
+
+        return response
+
+    # 2. Verify that the access token is valid FOR THIS APP
 
     # Check that our client's id matches that of the token
     # returned by Google API's server
-    if idinfo['aud'] != CLIENT_ID:
+    if gapi_tokeninfo['issued_to'] != CLIENT_ID:
         message = "Token's client ID does not match this app's."
         response = make_response(json.dumps(message), 401)
         response.headers['Content-Type'] = 'application/json'
 
         return response
 
-    # Verify that the user's NOT ALREADY LOGGED IN
+    # 3. Verify that the user's NOT ALREADY LOGGED IN
 
     # Get the access token stored in the session if there is one
-    stored_token = session.get('token')
+    stored_access_token = session.get('access_token')
     # Get the user id stored in the session if there is one
     stored_gplus_id = session.get('gplus_id')
 
     # Check if there is already an access token in the session
     # and if so, if the id of the token from the CREDENTIALS OBJECT
     # matches the id stored in the session
-    if stored_token is not None and gplus_id == stored_gplus_id:
+    if stored_access_token is not None and gplus_id == stored_gplus_id:
         print 'Current user is already connected.'
-        flash("Welcome %s!" % session['username'])
 
         return make_response(render_template('login_success.html'))
+
+    # PART 3: Log in
+    # -------
 
     # If we get this far, the access token is VALID
     # and it's THE RIGHT ACCESS TOKEN.
     # The user can be successfully logged in
 
     # 1. Store the access token in the session
-    session['token'] = token
+    session['access_token'] = access_token
     session['gplus_id'] = gplus_id
 
+    # 2. Get user info from Google's API
+    # Get the URL for GOOGLE'S API
+    userinfo_url = "https://www.googleapis.com/oauth2/v1/userinfo"
+    # Get the parameters to send with the request
+    params = {'access_token': credentials.access_token, 'alt': 'json'}
+    # Send a GET request to Google's API
+    userinfo = requests.get(userinfo_url, params=params)
+    # Store the user's info in JSON from the response to the request
+    userinfo_json = json.loads(userinfo.text)
+
     # 3. Store user info in the session
-    session['username'] = idinfo['name']
-    session['picture'] = idinfo['picture']
-    session['email'] = idinfo['email']
+    session['username'] = userinfo_json['name']
+    session['picture'] = userinfo_json['picture']
+    session['email'] = userinfo_json['email']
 
     # Specify we used Google to sign in
     session['provider'] = 'google'
 
-    # Check if user needs to be registered
+    # PART 4: Check if user needs to be registered
+    # -------
 
     # 1. Get the user id from db if user exists
     user_id = get_user_id(session.get('email'))
@@ -499,14 +550,12 @@ def gconnect():
     # 2. If it doesn't exist: create it and get his
     # newly created id
     if not user_id:
-        user_id = create_user_from_session()
+        user_id = create_user(session)
 
     # 3. Store the user id in the session
     session['user_id'] = user_id
 
     # Return html to place into the 'result' div
-    flash("Welcome %s!" % session['username'])
-
     return make_response(render_template('login_success.html'))
 
 
@@ -554,7 +603,7 @@ def gdisconnect():
     # -------
 
     # Get the ACCESS TOKEN from the session
-    token = session.get('token')
+    token = session.get('access_token')
 
     # If there is none, then we have no user logged in
     if token is None:
