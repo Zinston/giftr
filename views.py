@@ -606,9 +606,65 @@ def gconnect():
     # 2. If it doesn't exist: create it and get his
     # newly created id
     if not user_id:
-        user_id = create_user(session)
+        user_id = create_user_from_session()
 
     # 3. Store the user id in the session
+    session['user_id'] = user_id
+
+    # Return html to place into the 'result' div
+    return make_response(render_template('login_success.html'))
+
+
+@app.route('/fbconnect', methods=['GET', 'POST'])
+def fbconnect():
+    """Login and/or register a user using Google OAuth."""
+    # 1. Check if the posted STATE matches the session state
+    if request.args.get('state') != session['state']:
+        response = make_response(json.dumps('Invalid state parameter'), 401)
+        response.headers['Content-Type'] = 'application/json'
+
+        return response
+
+    # 2. Get the ACCESS TOKEN sent through ajax
+    access_token = request.data
+
+    # 3. Exchange client token for long-lived server-side token
+    # with GET /oauth/access_token?grant_type=fb_exchange_token&client_id=
+    # {app-id}&client_secret={app-secret}&fb_exchange_token={short-lived-token}
+    app_id = json.loads(open('fb_client_secrets.json', 'r').read())['web']['app_id']
+    app_secret = json.loads(open('fb_client_secrets.json', 'r').read())['web']['app_secret']
+    url = 'https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id=%s&client_secret=%s&fb_exchange_token=%s' % (app_id, app_secret, access_token)  # noqa
+    h = httplib2.Http()
+    result = h.request(url, 'GET')[1]
+
+    # 4. Use the long-lived token to get user info from API
+    # extract access token from result
+    token = eval(result).get('access_token') ## CHANGED FROM UDACITY
+
+    url = 'https://graph.facebook.com/v2.8/me?access_token=%s&fields=name,id,email,picture' % token
+    h = httplib2.Http()
+    result = h.request(url, 'GET')[1]
+    data = json.loads(result)
+
+    session['username'] = data['name']
+    session['email'] = data['email']
+    session['fb_id'] = data['id']
+    session['picture'] = data['picture']['data']['url']
+
+    # Specify we used Facebook to sign in
+    session['provider'] = 'facebook'
+
+    # 4. Check if user needs to be registered
+
+    # 4.1. Get the user id from db if user exists
+    user_id = get_user_id(session.get('email'))
+
+    # 4.2. If it doesn't exist: create it and get his
+    # newly created id
+    if not user_id:
+        user_id = create_user_from_session()
+
+    # 4.3. Store the user id in the session
     session['user_id'] = user_id
 
     # Return html to place into the 'result' div
