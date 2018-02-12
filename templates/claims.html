@@ -20,7 +20,7 @@
 {% endblock %}
 
 {% block body %}
-{% if session.username %}
+{% if session.username and gift.creator_id != session.user_id %}
 <div class="text-center">
     <a href="{{ url_for('show_add_claim', g_id=gift.id) }}" class="btn btn-success btn-lg">Claim</a>
 <div>

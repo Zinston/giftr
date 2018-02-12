@@ -132,6 +132,12 @@ def get_gift_byid(g_id):
 @login_required
 def show_edit_gift(g_id):
     gift = c.query(Gift).filter_by(id=g_id).first()
+    
+    if gift.creator_id != session.get('user_id'):
+        flash('You have to be the creator of that gift to see that page.')
+        return redirect(url_for('get_gift_byid',
+                                g_id=gift.id))
+
     categories = c.query(Category).all()
 
     return render_template('edit_gift.html',
@@ -143,6 +149,11 @@ def show_edit_gift(g_id):
 @login_required
 def edit_gift(g_id):
     gift = c.query(Gift).filter_by(id=g_id).first()
+
+    if gift.creator_id != session.get('user_id'):
+        flash('You have to be the creator of that gift to see that page.')
+        return redirect(url_for('get_gift_byid',
+                                g_id=gift.id))
 
     gift.name = request.form.get('name')
     gift.picture = request.form.get('picture')
@@ -163,6 +174,11 @@ def edit_gift(g_id):
 def show_delete_gift(g_id):
     gift = c.query(Gift).filter_by(id=g_id).first()
 
+    if gift.creator_id != session.get('user_id'):
+        flash('You have to be the creator of that gift to see that page.')
+        return redirect(url_for('get_gift_byid',
+                                g_id=gift.id))
+
     return render_template('delete_gift.html',
                            gift=gift)
 
@@ -171,6 +187,11 @@ def show_delete_gift(g_id):
 @login_required
 def delete_gift(g_id):
     gift = c.query(Gift).filter_by(id=g_id).first()
+
+    if gift.creator_id != session.get('user_id'):
+        flash('You have to be the creator of that gift to see that page.')
+        return redirect(url_for('get_gift_byid',
+                                g_id=gift.id))
 
     c.delete(gift)
     c.commit()
@@ -210,6 +231,11 @@ def get_claims(g_id):
 def show_add_claim(g_id):
     gift = c.query(Gift).filter_by(id=g_id).first()
 
+    if gift.creator_id == session.get('user_id'):
+        flash('You cannot claim your own gift ;-)')
+        return redirect(url_for('get_gift_byid',
+                                g_id=gift.id))
+
     return render_template('add_claim.html',
                            gift=gift)
 
@@ -217,6 +243,13 @@ def show_add_claim(g_id):
 @app.route('/gifts/<int:g_id>/claims', methods=['POST'])
 @login_required
 def add_claim(g_id):
+    gift = c.query(Gift).filter_by(id=g_id).first()
+
+    if gift.creator_id == session.get('user_id'):
+        flash('You cannot claim your own gift ;-)')
+        return redirect(url_for('get_gift_byid',
+                                g_id=gift.id))
+
     claim = Claim(message=request.form.get('message'),
                   gift_id=g_id,
                   creator_id=session.get('user_id'))
@@ -244,6 +277,11 @@ def get_claim_byid(g_id, c_id):
 def show_edit_claim(g_id, c_id):
     claim = c.query(Claim).filter_by(id=c_id).first()
 
+    if claim.creator_id != session.get('user_id'):
+        flash('You have to be the creator of that claim to see that page.')
+        return redirect(url_for('get_claim_byid',
+                                c_id=claim.id))
+
     return render_template('edit_claim.html',
                            claim=claim)
 
@@ -252,6 +290,11 @@ def show_edit_claim(g_id, c_id):
 @login_required
 def edit_claim(g_id, c_id):
     claim = c.query(Claim).filter_by(id=c_id).first()
+
+    if claim.creator_id != session.get('user_id'):
+        flash('You have to be the creator of that claim to see that page.')
+        return redirect(url_for('get_claim_byid',
+                                c_id=claim.id))
 
     claim.message = request.form.get('message')
 
@@ -270,6 +313,11 @@ def edit_claim(g_id, c_id):
 def show_delete_claim(g_id, c_id):
     claim = c.query(Claim).filter_by(id=c_id).first()
 
+    if claim.creator_id != session.get('user_id'):
+        flash('You have to be the creator of that claim to see that page.')
+        return redirect(url_for('get_claim_byid',
+                                c_id=claim.id))
+
     return render_template('delete_claim.html',
                            claim=claim)
 
@@ -278,6 +326,11 @@ def show_delete_claim(g_id, c_id):
 @login_required
 def delete_claim(g_id, c_id):
     claim = c.query(Claim).filter_by(id=c_id).first()
+
+    if claim.creator_id != session.get('user_id'):
+        flash('You have to be the creator of that claim to see that page.')
+        return redirect(url_for('get_claim_byid',
+                                c_id=claim.id))
 
     gift_name = claim.gift.name
 
