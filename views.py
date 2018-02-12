@@ -607,6 +607,9 @@ def gconnect():
     # newly created id
     if not user_id:
         user_id = create_user_from_session()
+        flash('Welcom %s! You successfully signed up!' % session['username'])
+    else:
+        flash('Welcome %s! You were successfully logged in!' % session['username'])
 
     # 3. Store the user id in the session
     session['user_id'] = user_id
@@ -663,6 +666,9 @@ def fbconnect():
     # newly created id
     if not user_id:
         user_id = create_user_from_session()
+        flash('Welcom %s! You successfully signed up!' % session['username'])
+    else:
+        flash('Welcome %s! You were successfully logged in!' % session['username'])
 
     # 4.3. Store the user id in the session
     session['user_id'] = user_id
