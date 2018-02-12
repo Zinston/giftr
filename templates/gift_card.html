@@ -1,8 +1,10 @@
 <div class="card card-block mx-auto">
 	{% if gift.picture %}
-	<a href="{{ url_for('get_gift_byid', g_id=gift.id) }}">
-		<img class="card-img-top img-fluid img-link" src="{{ gift.picture }}">
-	</a>
+	<div class="card-img img-link">
+		<a href="{{ url_for('get_gift_byid', g_id=gift.id) }}">
+			<img class="card-img-top img-fluid" src="{{ gift.picture }}">
+		</a>
+	</div>
 	{% endif %}
 	<a href="{{ url_for('show_add_claim', g_id=gift.id) }}" class="btn btn-success">Claim</a>
 	<div class="card-body">
