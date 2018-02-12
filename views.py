@@ -106,7 +106,8 @@ def add_gift():
     gift = Gift(name=request.form.get('name'),
                 picture=request.form.get('picture'),
                 description=request.form.get('description'),
-                category_id=request.form.get('category'))
+                category_id=request.form.get('category'),
+                creator_id=session.get('user_id'))
     c.add(gift)
     c.commit()
 
@@ -216,7 +217,8 @@ def show_add_claim(g_id):
 @login_required
 def add_claim(g_id):
     claim = Claim(message=request.form.get('message'),
-                  gift_id=g_id)
+                  gift_id=g_id,
+                  creator_id=session.get('user_id'))
 
     c.add(claim)
     c.commit()
