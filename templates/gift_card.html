@@ -4,12 +4,14 @@
 		<img class="card-img-top img-fluid" src="{{ gift.picture }}">
 	</div>
 	{% endif %}
+	{% if session.username %}
 	<a href="{{ url_for('show_add_claim', g_id=gift.id) }}" class="btn btn-success">Claim</a>
+	{% endif %}
 	<div class="card-body">
 		<a href="{{ url_for('get_gift_byid', g_id=gift.id) }}">
 			<h5 class="card-title mb-0">{{ gift.name }}</h5>
 		</a>
-		<span class="badge badge-info mb-3">{{ gift.category.name }}</span>
+		<span class="badge badge-secondary mb-3">{{ gift.category.name }}</span>
 		<small class="float-right text-muted">Offered by {{ gift.creator.name }}</small>
 		<p class="card-text mb-2">{{ gift.description }}</p>
 		<p class="card-text">
@@ -19,7 +21,11 @@
 			</small>
 		</p>
 		<div class="links text-center">
+			{% if page == "gifts" %}
+			<a href="{{ url_for('get_gift_byid', g_id=gift.id) }}" class="btn btn-info">View</a>
+			{% elif page == "gift" %}
 			<a href="{{ url_for('get_claims', g_id=gift.id) }}" class="btn btn-outline-info">Claims</a>
+			{% endif %}
 			{% if session.username %}
 			<a href="{{ url_for('show_edit_gift', g_id=gift.id) }}" class="btn btn-outline-warning">Edit</a>
 			<a href="{{ url_for('show_delete_gift', g_id=gift.id) }}" class="btn btn-outline-danger">Delete</a>

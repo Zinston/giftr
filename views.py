@@ -79,7 +79,8 @@ def get_gifts():
             return render_template('gifts.html',
                                    gifts=gifts,
                                    categories=categories,
-                                   req_cat=req_cat)
+                                   req_cat=req_cat,
+                                   page="gifts")
     except:
         pass
     
@@ -87,7 +88,8 @@ def get_gifts():
 
     return render_template('gifts.html',
                            categories=categories,
-                           gifts=gifts)
+                           gifts=gifts,
+                           page="gifts")
 
 
 @app.route('/gifts/add', methods=['GET'])
@@ -122,7 +124,8 @@ def get_gift_byid(g_id):
 
     return render_template('gift.html',
                            gift=gift,
-                           categories=categories)
+                           categories=categories,
+                           page="gift")
 
 
 @app.route('/gifts/<int:g_id>/edit', methods=['GET'])
