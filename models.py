@@ -219,7 +219,6 @@ class Claim(Base):
         }
 
 
-
 # CONFIGURATION #
 
 # point to the database we'll use
