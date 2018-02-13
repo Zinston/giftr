@@ -25,7 +25,8 @@ from flask import (Flask,
                    jsonify,
                    g,
                    session,
-                   make_response)
+                   make_response,
+                   abort)
 
 # For OAuth
 from oauth2client.client import (flow_from_clientsecrets,
@@ -66,6 +67,25 @@ def login_required(f):
             return redirect(url_for('show_login'))
         return f(*args, **kwargs)
     return decorated_function
+
+
+# CSRF protection
+# Source: http://flask.pocoo.org/snippets/3/
+@app.before_request
+def csrf_protect():
+    if request.method == "POST":
+        token = session.pop('_csrf_token', None)
+        if not token or token != request.form.get('_csrf_token'):
+            abort(403)
+
+
+def generate_csrf_token():
+    if '_csrf_token' not in session:
+        session['_csrf_token'] = get_random_string()
+    return session['_csrf_token']
+
+
+app.jinja_env.globals['csrf_token'] = generate_csrf_token
 
 
 # ROUTES
@@ -605,10 +625,7 @@ def show_login():
         flash("You're already logged in. Disconnect first.")
         return redirect(url_for('get_gifts'))
 
-    # Generate a random string of 32 uppercase letters and digits
-    choice = string.ascii_uppercase + string.digits
-    chars = [random.choice(choice) for x in xrange(32)]
-    state = ''.join(chars)
+    state = get_random_string()
 
     # store that random string in the session
     session['state'] = state
@@ -1064,6 +1081,13 @@ def get_user_id(email):
         return user.id
     except:
         return None
+
+
+def get_random_string():
+    """Get a random string of 32 uppercase letters and digits."""
+    choice = string.ascii_uppercase + string.digits
+    chars = [random.choice(choice) for x in xrange(32)]
+    return ''.join(chars)
 
 
 if __name__ == '__main__':

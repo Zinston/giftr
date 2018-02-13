@@ -21,6 +21,8 @@
 
 {% block body %}
 <form method="POST" action="{{ url_for('delete_gift', g_id=category.id) }}" class="text-center">
+	<input name="_csrf_token" type="hidden" value="{{ csrf_token() }}">
+
 	<button class="btn btn-danger btn-lg" type="submit">Confirm</button>
 </form>
 {% endblock %}

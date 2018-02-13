@@ -21,6 +21,8 @@
 
 {% block body %}
 <form method="POST" action="{{ url_for('edit_gift', g_id=gift.id) }}">
+    <input name="_csrf_token" type="hidden" value="{{ csrf_token() }}">
+
 	<div class="form-group">
 		<label for="name">Name</label>
     	<input id="name" class="form-control" type='text' name='name' placeholder='Name' value='{{ gift.name }}'>

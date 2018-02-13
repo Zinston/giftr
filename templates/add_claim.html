@@ -21,6 +21,8 @@
 
 {% block body %}
 <form method="POST" action="{{ url_for('add_claim', g_id=gift.id) }}">
+	<input name="_csrf_token" type="hidden" value="{{ csrf_token() }}">
+
 	<div class="form-group">
 		<label for="message">Message to the gifter</label>
     	<textarea id="message" class="form-control" name='message' placeholder='Message'></textarea>
