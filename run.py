@@ -23,6 +23,20 @@ from views.auth.logout.views import logout_blueprint
 from views.api.gifts.views import api_gifts_blueprint
 from views.api.categories.views import api_categories_blueprint
 
+# DATABASE
+
+import sys
+from sqlalchemy import create_engine
+
+from models import (Base,
+                    User,
+                    Gift,
+                    Category,
+                    Claim)
+
+engine = create_engine('sqlite:///giftr.db')
+Base.metadata.create_all(engine)
+
 
 # Bind Flask
 app = Flask(__name__, instance_relative_config=True)
