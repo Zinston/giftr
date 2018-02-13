@@ -1,22 +1,19 @@
+#!/usr/bin/env python
+
+"""Define routes for CRUD operations on claims."""
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import (Base,
-                    User,
                     Gift,
-                    Claim,
-                    Category)
+                    Claim)
 
-from flask import (Flask,
-                   request,
+from flask import (request,
                    redirect,
                    url_for,
                    render_template,
                    flash,
-                   jsonify,
-                   g,
                    session,
-                   make_response,
-                   abort,
                    Blueprint)
 
 # For making decorators
@@ -30,6 +27,7 @@ c = DBSession()
 
 claims_blueprint = Blueprint('claims', __name__, template_folder='templates')
 
+
 # DECORATORS
 
 def login_required(f):
@@ -41,6 +39,7 @@ def login_required(f):
             return redirect(url_for('show_login'))
         return f(*args, **kwargs)
     return decorated_function
+
 
 # ROUTES
 
@@ -138,7 +137,7 @@ def get_claim_byid(g_id, c_id):
                            claim=claim)
 
 
-@claims_blueprint.route('/gifts/<int:g_id>/claims/<int:c_id>/edit', methods=['GET'])
+@claims_blueprint.route('/gifts/<int:g_id>/claims/<int:c_id>/edit', methods=['GET'])  # noqa
 @login_required
 def show_edit_claim(g_id, c_id):
     """Render edit form for a claim of id c_id on a gift of id g_id.
@@ -161,7 +160,7 @@ def show_edit_claim(g_id, c_id):
                            claim=claim)
 
 
-@claims_blueprint.route('/gifts/<int:g_id>/claims/<int:c_id>/edit', methods=['POST'])
+@claims_blueprint.route('/gifts/<int:g_id>/claims/<int:c_id>/edit', methods=['POST'])  # noqa
 @login_required
 def edit_claim(g_id, c_id):
     """Edit a claim of id c_id on a gift of id g_id with POST.
@@ -191,7 +190,7 @@ def edit_claim(g_id, c_id):
                             c_id=c_id))
 
 
-@claims_blueprint.route('/gifts/<int:g_id>/claims/<int:c_id>/delete', methods=['GET'])
+@claims_blueprint.route('/gifts/<int:g_id>/claims/<int:c_id>/delete', methods=['GET'])  # noqa
 @login_required
 def show_delete_claim(g_id, c_id):
     """Render delete form for a claim with c_id on a gift with g_id.
@@ -214,7 +213,7 @@ def show_delete_claim(g_id, c_id):
                            claim=claim)
 
 
-@claims_blueprint.route('/gifts/<int:g_id>/claims/<int:c_id>/delete', methods=['POST'])
+@claims_blueprint.route('/gifts/<int:g_id>/claims/<int:c_id>/delete', methods=['POST'])  # noqa
 @login_required
 def delete_claim(g_id, c_id):
     """Delete a claim of id c_id on a gift of id g_id with POST.
