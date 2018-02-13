@@ -25,7 +25,7 @@ api_gifts_blueprint = Blueprint('api_gifts', __name__, template_folder='template
 # ROUTES
 
 @api_gifts_blueprint.route('/api/gifts')
-def get_gifts():
+def get():
     """Return the gifts in json."""
     req_cat = request.args.get('cat')
     categories = c.query(Category).all()
@@ -49,7 +49,7 @@ def get_gifts():
 
 
 @api_gifts_blueprint.route('/api/gifts/<int:g_id>')
-def get_gift(g_id):
+def get_byid(g_id):
     """Return a gift of id g_id in json.
 
     Argument:
