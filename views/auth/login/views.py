@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+
+"""Define routes for login procedures."""
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import (Base,
@@ -262,3 +266,41 @@ def fbconnect():
 
     # Return html to place into the 'result' div
     return make_response(render_template('login_success.html'))
+
+
+# HELPERS
+
+def get_random_string():
+    """Get a random string of 32 uppercase letters and digits."""
+    choice = string.ascii_uppercase + string.digits
+    chars = [random.choice(choice) for x in xrange(32)]
+    return ''.join(chars)
+
+
+def create_user_from_session():
+    """Add a user to database from session, return its database id."""
+    # Create a new User in db with the info from the session
+    new_user = User(name=session.get('username'),
+                    email=session.get('email'),
+                    picture=session.get('picture'))
+    c.add(new_user)
+    c.commit()
+
+    # Get the new User, from their email
+    user_id = get_user_id(session.get('email'))
+
+    # Return the new User's id
+    return user_id
+
+
+def get_user_id(email):
+    """Return a user's database id from their email address.
+
+    Argument:
+    email (str): the user's email address.
+    """
+    try:
+        user = c.query(User).filter_by(email=email).one()
+        return user.id
+    except:
+        return None
