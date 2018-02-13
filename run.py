@@ -50,7 +50,13 @@ DBSession = sessionmaker(bind=engine)
 c = DBSession()
 
 # Bind Flask
-app = Flask(__name__)
+app = Flask(__name__, instance_relative_config=True)
+app.config.from_pyfile('flask.cfg')
+
+# BLUEPRINTS
+from views.client.gifts.views import gifts_blueprint
+# register the blueprints
+app.register_blueprint(gifts_blueprint)
 
 
 # API Secrets and IDs
@@ -66,15 +72,6 @@ CLIENT_ID = get_google_client_id('google_client_secrets.json')
 
 
 # DECORATORS
-def login_required(f):
-    """Redirect to login page if the user is not logged in (decorator)."""
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if 'username' not in session:
-            flash('You need to be logged in to see that page.')
-            return redirect(url_for('show_login'))
-        return f(*args, **kwargs)
-    return decorated_function
 
 
 # CSRF protection

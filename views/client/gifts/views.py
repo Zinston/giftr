@@ -1,5 +1,50 @@
-@app.route('/', methods=['GET'])
-@app.route('/gifts', methods=['GET'])
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from models import (Base,
+                    User,
+                    Gift,
+                    Claim,
+                    Category)
+
+from flask import (Flask,
+                   request,
+                   redirect,
+                   url_for,
+                   render_template,
+                   flash,
+                   jsonify,
+                   g,
+                   session,
+                   make_response,
+                   abort,
+                   Blueprint)
+
+# For making decorators
+from functools import wraps
+
+# Bind database
+engine = create_engine('sqlite:///giftr.db')
+Base.metadata.bind = engine
+DBSession = sessionmaker(bind=engine)
+c = DBSession()
+
+gifts_blueprint = Blueprint('gifts', __name__, template_folder='templates')
+
+# DECORATORS
+def login_required(f):
+    """Redirect to login page if the user is not logged in (decorator)."""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'username' not in session:
+            flash('You need to be logged in to see that page.')
+            return redirect(url_for('show_login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+# ROUTES
+
+@gifts_blueprint.route('/', methods=['GET'])
+@gifts_blueprint.route('/gifts', methods=['GET'])
 def get_gifts():
     """Render all gifts or gifts of category id "cat" if query."""
     categories = c.query(Category).all()
@@ -30,7 +75,7 @@ def get_gifts():
                            page="gifts")
 
 
-@app.route('/gifts/add', methods=['GET'])
+@gifts_blueprint.route('/gifts/add', methods=['GET'])
 @login_required
 def show_add_gift():
     """Render form to add a gift.
@@ -43,7 +88,7 @@ def show_add_gift():
                            categories=categories)
 
 
-@app.route('/gifts/add', methods=['POST'])
+@gifts_blueprint.route('/gifts/add', methods=['POST'])
 @login_required
 def add_gift():
     """Add a gift to the database with POST.
@@ -64,7 +109,7 @@ def add_gift():
                             g_id=gift.id))
 
 
-@app.route('/gifts/<int:g_id>', methods=['GET'])
+@gifts_blueprint.route('/gifts/<int:g_id>', methods=['GET'])
 def get_gift_byid(g_id):
     """Render a gift of id g_id.
 
@@ -82,7 +127,7 @@ def get_gift_byid(g_id):
                            page="gift")
 
 
-@app.route('/gifts/<int:g_id>/edit', methods=['GET'])
+@gifts_blueprint.route('/gifts/<int:g_id>/edit', methods=['GET'])
 @login_required
 def show_edit_gift(g_id):
     """Render an edit form for a gift of id g_id.
@@ -107,7 +152,7 @@ def show_edit_gift(g_id):
                            categories=categories)
 
 
-@app.route('/gifts/<int:g_id>/edit', methods=['POST'])
+@gifts_blueprint.route('/gifts/<int:g_id>/edit', methods=['POST'])
 @login_required
 def edit_gift(g_id):
     """Edit a gift of id g_id with POST.
@@ -139,7 +184,7 @@ def edit_gift(g_id):
                             g_id=gift.id))
 
 
-@app.route('/gifts/<int:g_id>/delete', methods=['GET'])
+@gifts_blueprint.route('/gifts/<int:g_id>/delete', methods=['GET'])
 @login_required
 def show_delete_gift(g_id):
     """Render a delete form for a gift of id g_id.
@@ -161,7 +206,7 @@ def show_delete_gift(g_id):
                            gift=gift)
 
 
-@app.route('/gifts/<int:g_id>/delete', methods=['POST'])
+@gifts_blueprint.route('/gifts/<int:g_id>/delete', methods=['POST'])
 @login_required
 def delete_gift(g_id):
     """Delete a gift of id g_id with POST.
