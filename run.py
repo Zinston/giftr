@@ -32,6 +32,9 @@ from flask import (Flask,
 # For making decorators
 from functools import wraps
 
+import string
+import random
+
 # Bind database
 engine = create_engine('sqlite:///giftr.db')
 Base.metadata.bind = engine
@@ -87,6 +90,13 @@ def generate_csrf_token():
     if '_csrf_token' not in session:
         session['_csrf_token'] = get_random_string()
     return session['_csrf_token']
+
+
+def get_random_string():
+    """Get a random string of 32 uppercase letters and digits."""
+    choice = string.ascii_uppercase + string.digits
+    chars = [random.choice(choice) for x in xrange(32)]
+    return ''.join(chars)
 
 
 app.jinja_env.globals['csrf_token'] = generate_csrf_token

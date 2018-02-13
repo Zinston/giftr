@@ -34,7 +34,7 @@ def login_required(f):
     def decorated_function(*args, **kwargs):
         if 'username' not in session:
             flash('You need to be logged in to see that page.')
-            return redirect(url_for('show_login'))
+            return redirect(url_for('login.show_login'))
         return f(*args, **kwargs)
     return decorated_function
 
@@ -42,17 +42,30 @@ def login_required(f):
 # ROUTES
 
 @categories_blueprint.route('/categories', methods=['GET'])
-def get_categories():
-    """Render all claims in the database."""
+def get():
+    """Render all categories in the database."""
     categories = c.query(Category).all()
 
     return render_template('categories.html',
                            categories=categories)
 
 
+@categories_blueprint.route('/categories/<int:cat_id>', methods=['GET'])
+def get_byid(cat_id):
+    """Render a category of id cat_id.
+
+    Argument:
+    cat_id (int): the id of the desired category.
+    """
+    category = c.query(Category).filter_by(id=cat_id).first()
+
+    return render_template('category.html',
+                           category=category)
+
+
 @categories_blueprint.route('/categories/add', methods=['GET'])
 @login_required
-def show_add_category():
+def add_get():
     """Render form to add a category.
 
     Login required.
@@ -60,9 +73,9 @@ def show_add_category():
     return render_template('add_category.html')
 
 
-@categories_blueprint.route('/categories', methods=['POST'])
+@categories_blueprint.route('/categories/add', methods=['POST'])
 @login_required
-def add_category():
+def add_post():
     """Add a category to the database with POST.
 
     Login required.
@@ -76,26 +89,13 @@ def add_category():
 
     flash("The category \"%s\" was successfully added." % category.name)
 
-    return redirect(url_for('get_category_byid',
+    return redirect(url_for('categories.get_byid',
                             cat_id=category.id))
-
-
-@categories_blueprint.route('/categories/<int:cat_id>', methods=['GET'])
-def get_category_byid(cat_id):
-    """Render a category of id cat_id.
-
-    Argument:
-    cat_id (int): the id of the desired category.
-    """
-    category = c.query(Category).filter_by(id=cat_id).first()
-
-    return render_template('category.html',
-                           category=category)
 
 
 @categories_blueprint.route('/categories/<int:cat_id>/edit', methods=['GET'])
 @login_required
-def show_edit_category(cat_id):
+def edit_get(cat_id):
     """Render edit form for a category of id cat_id.
 
     Login required.
@@ -109,9 +109,9 @@ def show_edit_category(cat_id):
                            category=category)
 
 
-@categories_blueprint.route('/categories/<int:cat_id>', methods=['POST'])
+@categories_blueprint.route('/categories/<int:cat_id>/edit', methods=['POST'])
 @login_required
-def edit_category(cat_id):
+def edit_post(cat_id):
     """Edit a category of id cat_id with POST.
 
     Login required.
@@ -130,13 +130,13 @@ def edit_category(cat_id):
 
     flash("The category \"%s\" was successfully edited." % category.name)
 
-    return redirect(url_for('get_category_byid',
+    return redirect(url_for('categories.get_byid',
                             cat_id=category.id))
 
 
 @categories_blueprint.route('/categories/<int:cat_id>/delete', methods=['GET'])
 @login_required
-def show_delete_category(cat_id):
+def delete_get(cat_id):
     """Render delete form for a category of id cat_id.
 
     Login required.
@@ -150,9 +150,9 @@ def show_delete_category(cat_id):
                            category=category)
 
 
-@categories_blueprint.route('/categories/<int:cat_id>', methods=['POST'])
+@categories_blueprint.route('/categories/<int:cat_id>/delete', methods=['POST'])  # noqa
 @login_required
-def delete_category(cat_id):
+def delete_post(cat_id):
     """Delete a category of id cat_id with POST.
 
     Login required.
@@ -160,6 +160,7 @@ def delete_category(cat_id):
     Argument:
     cat_id (int): the id of the desired category.
     """
+    print cat_id
     category = c.query(Category).filter_by(id=cat_id).first()
 
     c.delete(category)
@@ -167,4 +168,4 @@ def delete_category(cat_id):
 
     flash("The category \"%s\" was successfully deleted." % category.name)
 
-    return redirect(url_for('get_categories'))
+    return redirect(url_for('categories.get_categories'))

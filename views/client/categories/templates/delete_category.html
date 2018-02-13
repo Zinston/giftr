@@ -20,7 +20,7 @@
 {% endblock %}
 
 {% block body %}
-<form method="POST" action="{{ url_for('gifts.delete_gift', g_id=category.id) }}" class="text-center">
+<form method="POST" action="{{ url_for('categories.delete_category', cat_id=category.id) }}" class="text-center">
 	<input name="_csrf_token" type="hidden" value="{{ csrf_token() }}">
 
 	<button class="btn btn-danger btn-lg" type="submit">Confirm</button>
