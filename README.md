@@ -4,7 +4,7 @@ It's a simple catalog of gifts. Want it? Claim it. The "gifter" will then be abl
 
 ## Installation
 * Clone this repository
-* Install dependencies
+* Install dependencies: `pip install -r requirements.txt`
 * Run the app with python 2.7: `python views.py`
 * It's running on http://localhost:8080
 
