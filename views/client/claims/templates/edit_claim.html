@@ -12,17 +12,17 @@
 
 {% block nav %}
 <ol class="breadcrumb ml-auto mb-0" style="padding:.5rem 1rem;">
-	<li class="breadcrumb-item"><a href="{{ url_for('get_gifts') }}">Gifts</a></li>
-    <li class="breadcrumb-item"><a href="{{ url_for('get_gifts', cat=claim.gift.category.id) }}">{{ claim.gift.category.name }}</a></li>
-    <li class="breadcrumb-item"><a href="{{ url_for('get_gift_byid', g_id=claim.gift.id) }}">{{ claim.gift.name | truncate(25) }}</a></li>
-    <li class="breadcrumb-item"><a href="{{ url_for('get_gift_byid', g_id=claim.gift.id) }}">Claims</a></li>
-    <li class="breadcrumb-item"><a href="{{ url_for('get_claim_byid', g_id=claim.gift.id, c_id=claim.id) }}">{{ claim.message | truncate(25) }}</a></li>
+	<li class="breadcrumb-item"><a href="{{ url_for('gifts.get_gifts') }}">Gifts</a></li>
+    <li class="breadcrumb-item"><a href="{{ url_for('gifts.get_gifts', cat=claim.gift.category.id) }}">{{ claim.gift.category.name }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ url_for('gifts.get_gift_byid', g_id=claim.gift.id) }}">{{ claim.gift.name | truncate(25) }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ url_for('gifts.get_gift_byid', g_id=claim.gift.id) }}">Claims</a></li>
+    <li class="breadcrumb-item"><a href="{{ url_for('claims.get_claim_byid', g_id=claim.gift.id, c_id=claim.id) }}">{{ claim.message | truncate(25) }}</a></li>
     <li class="breadcrumb-item active" aria-current="page">Edit</li>
 </ol>
 {% endblock %}
 
 {% block body %}
-<form method="POST" action="{{ url_for('edit_claim', g_id=claim.gift_id, c_id=claim.id) }}">
+<form method="POST" action="{{ url_for('claims.edit_claim', g_id=claim.gift_id, c_id=claim.id) }}">
     <input name="_csrf_token" type="hidden" value="{{ csrf_token() }}">
 
 	<div class="form-group">

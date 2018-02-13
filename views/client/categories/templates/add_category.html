@@ -8,14 +8,14 @@
 
 {% block nav %}
 <ol class="breadcrumb ml-auto mb-0" style="padding:.5rem 1rem;">
-	<li class="breadcrumb-item"><a href="{{ url_for('get_gifts') }}">Gifts</a></li>
-	<li class="breadcrumb-item"><a href="{{ url_for('get_categories') }}">Categories</a></li>
+	<li class="breadcrumb-item"><a href="{{ url_for('gifts.get_gifts') }}">Gifts</a></li>
+	<li class="breadcrumb-item"><a href="{{ url_for('categories.get_categories') }}">Categories</a></li>
     <li class="breadcrumb-item active" aria-current="page">Add</li>
 </ol>
 {% endblock %}
 
 {% block body %}
-<form method='POST' action="{{ url_for('add_category') }}">
+<form method='POST' action="{{ url_for('categories.add_category') }}">
     <input name="_csrf_token" type="hidden" value="{{ csrf_token() }}">
 
 	<div class="form-group">

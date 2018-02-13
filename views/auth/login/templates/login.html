@@ -42,7 +42,7 @@
 	function successful_login(html_response) {
 		$('#result').html(html_response)
 		setTimeout(function() {
-			window.location.href = "{{ url_for('get_gifts') }}";
+			window.location.href = "{{ url_for('gifts.get_gifts') }}";
 		}, 4000);
 	};
 

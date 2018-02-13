@@ -12,8 +12,8 @@
 
 {% block nav %}
 <ol class="breadcrumb ml-auto mb-0" style="padding:.5rem 1rem;">
-	<li class="breadcrumb-item"><a href="{{ url_for('get_gifts') }}">Gifts</a></li>
-	<li class="breadcrumb-item"><a href="{{ url_for('get_categories') }}">Categories</a></li>
+	<li class="breadcrumb-item"><a href="{{ url_for('gifts.get_gifts') }}">Gifts</a></li>
+	<li class="breadcrumb-item"><a href="{{ url_for('categories.get_categories') }}">Categories</a></li>
     <li class="breadcrumb-item active" aria-current="page">{{ category.name }}</li>
 </ol>
 {% endblock %}
@@ -30,7 +30,7 @@
 {% if session.username %}
 <br>
 <br>
-<a href="{{ url_for('show_edit_category', cat_id=category.id) }}" class="btn btn-outline-warning">Edit</a>
-<a href="{{ url_for('show_delete_category', cat_id=category.id) }}" class="btn btn-outline-danger">Delete</a>
+<a href="{{ url_for('categories.show_edit_category', cat_id=category.id) }}" class="btn btn-outline-warning">Edit</a>
+<a href="{{ url_for('categories.show_delete_category', cat_id=category.id) }}" class="btn btn-outline-danger">Delete</a>
 {% endif %}
 {% endblock %}
