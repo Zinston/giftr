@@ -78,6 +78,7 @@ def login_required(f):
 # Source: http://flask.pocoo.org/snippets/3/
 @app.before_request
 def csrf_protect():
+    """Check on every POST form submit for a hidden CSRF PROTECT token."""
     if request.method == "POST" and request.form:
         token = session.pop('_csrf_token', None)
         if not token or token != request.form.get('_csrf_token'):
@@ -86,6 +87,7 @@ def csrf_protect():
 
 
 def generate_csrf_token():
+    """Return and store in session a random CSRF PROTECT token."""
     if '_csrf_token' not in session:
         session['_csrf_token'] = get_random_string()
     return session['_csrf_token']
