@@ -48,7 +48,7 @@ No functionality has been implemented yet to:
 The API can be used to get JSON data containing the gifts and categories from GIFTR's database. Here are the available endpoints:
 
 | Path                         | Method | Returns                         | Notes                                                      |
-| ---------------------------- |:------:| ------------------------------- | ----------------------------------------------------------:|
+| ---------------------------- |:------:| ------------------------------- | ---------------------------------------------------------- |
 | /api/gifts                   | GET    | All gifts in JSON               | Add cat=n as query string to get all gifts from category n |
 | /api/gifts/<int:g_id>        | GET    | A gift of ID g_id in JSON       |                                                            |
 | /api/categories              | GET    | All categories in JSON          |                                                            |
