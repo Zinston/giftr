@@ -1,22 +1,18 @@
+#!/usr/bin/env python
+
+"""Define routes for CRUD operations on categories."""
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import (Base,
-                    User,
-                    Gift,
-                    Claim,
                     Category)
 
-from flask import (Flask,
-                   request,
+from flask import (request,
                    redirect,
                    url_for,
                    render_template,
                    flash,
-                   jsonify,
-                   g,
                    session,
-                   make_response,
-                   abort,
                    Blueprint)
 
 # For making decorators
@@ -28,7 +24,8 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 c = DBSession()
 
-categories_blueprint = Blueprint('categories', __name__, template_folder='templates')
+categories_blueprint = Blueprint('categories', __name__, template_folder='templates')  # noqa
+
 
 # DECORATORS
 def login_required(f):
@@ -40,6 +37,7 @@ def login_required(f):
             return redirect(url_for('show_login'))
         return f(*args, **kwargs)
     return decorated_function
+
 
 # ROUTES
 
