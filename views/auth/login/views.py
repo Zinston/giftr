@@ -49,12 +49,12 @@ CLIENT_ID = get_google_client_id('google_client_secrets.json')
 # ROUTES
 
 @login_blueprint.route('/login', methods=['GET'])
-def show_login():
+def show():
     """Render login page with a generated random state variable."""
     # If the user is already logged in, redirect them.
     if 'username' in session:
         flash("You're already logged in. Disconnect first.")
-        return redirect(url_for('gifts.get_gifts'))
+        return redirect(url_for('gifts.get'))
 
     state = get_random_string()
 

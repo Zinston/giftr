@@ -12,15 +12,15 @@
 
 {% block nav %}
 <ol class="breadcrumb ml-auto mb-0" style="padding:.5rem 1rem;">
-	<li class="breadcrumb-item"><a href="{{ url_for('gifts.get_gifts') }}">Gifts</a></li>
-    <li class="breadcrumb-item"><a href="{{ url_for('gifts.get_gifts', cat=gift.category.id) }}">{{ gift.category.name }}</a></li>
-    <li class="breadcrumb-item"><a href="{{ url_for('gifts.get_gift_byid', g_id=gift.id) }}">{{ gift.name | truncate(25) }}</a></li>
+	<li class="breadcrumb-item"><a href="{{ url_for('gifts.get') }}">Gifts</a></li>
+    <li class="breadcrumb-item"><a href="{{ url_for('gifts.get', cat=gift.category.id) }}">{{ gift.category.name }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ url_for('gifts.get_byid', g_id=gift.id) }}">{{ gift.name | truncate(25) }}</a></li>
     <li class="breadcrumb-item active" aria-current="page">Delete</li>
 </ol>
 {% endblock %}
 
 {% block body %}
-<form method="POST" action="{{ url_for('gifts.delete_gift', g_id=gift.id) }}" class="text-center">
+<form method="POST" action="{{ url_for('gifts.delete_post', g_id=gift.id) }}" class="text-center">
 	<input name="_csrf_token" type="hidden" value="{{ csrf_token() }}">
 
 	<button class="btn btn-danger btn-lg" type="submit">Confirm</button>

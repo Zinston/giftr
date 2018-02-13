@@ -34,7 +34,7 @@ def login_required(f):
     def decorated_function(*args, **kwargs):
         if 'username' not in session:
             flash('You need to be logged in to see that page.')
-            return redirect(url_for('login.show_login'))
+            return redirect(url_for('login.show'))
         return f(*args, **kwargs)
     return decorated_function
 
@@ -168,4 +168,4 @@ def delete_post(cat_id):
 
     flash("The category \"%s\" was successfully deleted." % category.name)
 
-    return redirect(url_for('categories.get_categories'))
+    return redirect(url_for('categories.get'))

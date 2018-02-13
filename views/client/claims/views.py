@@ -36,7 +36,7 @@ def login_required(f):
     def decorated_function(*args, **kwargs):
         if 'username' not in session:
             flash('You need to be logged in to see that page.')
-            return redirect(url_for('show_login'))
+            return redirect(url_for('login.show'))
         return f(*args, **kwargs)
     return decorated_function
 
@@ -82,7 +82,7 @@ def add_get(g_id):
 
     if gift.creator_id == session.get('user_id'):
         flash('You cannot claim your own gift ;-)')
-        return redirect(url_for('get_gift_byid',
+        return redirect(url_for('gifts.get_byid',
                                 g_id=gift.id))
 
     return render_template('add_claim.html',
@@ -104,7 +104,7 @@ def add_post(g_id):
 
     if gift.creator_id == session.get('user_id'):
         flash('You cannot claim your own gift ;-)')
-        return redirect(url_for('get_gift_byid',
+        return redirect(url_for('gifts.get_byid',
                                 g_id=gift.id))
 
     claim = Claim(message=request.form.get('message'),

@@ -12,9 +12,9 @@
 
 {% block nav %}
 <ol class="breadcrumb ml-auto mb-0" style="padding:.5rem 1rem;">
-    <li class="breadcrumb-item"><a href="{{ url_for('gifts.get_gifts') }}">Gifts</a></li>
-    <li class="breadcrumb-item"><a href="{{ url_for('gifts.get_gifts', cat=gift.category.id) }}">{{ gift.category.name }}</a></li>
-    <li class="breadcrumb-item"><a href="{{ url_for('gifts.get_gift_byid', g_id=gift.id) }}">{{ gift.name | truncate(25) }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ url_for('gifts.get') }}">Gifts</a></li>
+    <li class="breadcrumb-item"><a href="{{ url_for('gifts.get', cat=gift.category.id) }}">{{ gift.category.name }}</a></li>
+    <li class="breadcrumb-item"><a href="{{ url_for('gifts.get_byid', g_id=gift.id) }}">{{ gift.name | truncate(25) }}</a></li>
     <li class="breadcrumb-item active" aria-current="page">Claims</li>
 </ol>
 {% endblock %}
@@ -22,14 +22,14 @@
 {% block body %}
 {% if session.username and gift.creator_id != session.user_id %}
 <div class="text-center">
-    <a href="{{ url_for('claims.show_add_claim', g_id=gift.id) }}" class="btn btn-success btn-lg">Claim</a>
+    <a href="{{ url_for('claims.add_get', g_id=gift.id) }}" class="btn btn-success btn-lg">Claim</a>
 <div>
 <br>
 {% endif %}
 
 <div class="list-group">
     {% for claim in claims %}
-    <a href="{{ url_for('claims.get_claim_byid', g_id=claim.gift_id, c_id=claim.id) }}" class="list-group-item list-group-item-action">
+    <a href="{{ url_for('claims.get_byid', g_id=claim.gift_id, c_id=claim.id) }}" class="list-group-item list-group-item-action">
     	<span class="float-left">{{ claim.creator.name }}</span>
     	<span class="float-right">{{ claim.created_at.strftime('%d %b %Y at %H:%M') }}</span>
     </a>

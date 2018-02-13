@@ -13,8 +13,8 @@
 
 {% block nav %}
 <ol class="breadcrumb ml-auto mb-0" style="padding:.5rem 1rem;">
-	<li class="breadcrumb-item"><a href="{{ url_for('gifts.get_gifts') }}">Gifts</a></li>
-    <li class="breadcrumb-item"><a href="{{ url_for('gifts.get_gifts', cat=gift.category.id) }}">{{ gift.category.name }}</a></li>
+	<li class="breadcrumb-item"><a href="{{ url_for('gifts.get') }}">Gifts</a></li>
+    <li class="breadcrumb-item"><a href="{{ url_for('gifts.get', cat=gift.category.id) }}">{{ gift.category.name }}</a></li>
     <li class="breadcrumb-item active" aria-current="page">{{ gift.name | truncate(25) }}</li>
 </ol>
 {% endblock %}

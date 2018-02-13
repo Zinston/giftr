@@ -46,7 +46,7 @@ def disconnect():
         flash("You have successfully logged out.")
 
         # Redirect them
-        return redirect(url_for('gifts.get_gifts'))
+        return redirect(url_for('gifts.get'))
 
     # If there's no user...
     else:
@@ -54,7 +54,7 @@ def disconnect():
         flash("You were not logged in to begin with...")
 
         # Redirect them
-        return redirect(url_for('gifts.get_gifts'))
+        return redirect(url_for('gifts.get'))
 
 
 @logout_blueprint.route('/gdisconnect')

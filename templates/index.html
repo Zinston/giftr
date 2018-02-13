@@ -15,12 +15,12 @@
 	</head>
 	<body>
 		<nav class="navbar navbar-expand-xl navbar-light bg-light fixed-top">
-			<a class="navbar-brand" href="{{ url_for('gifts.get_gifts') }}">Giftr</a>
+			<a class="navbar-brand" href="{{ url_for('gifts.get') }}">Giftr</a>
 			<div class="navbar-nav">
-				<a class="nav-item nav-link" href="{{ url_for('gifts.get_gifts') }}">Home</a>
-				<a class="nav-item nav-link" href="{{ url_for('categories.get_categories') }}">Categories</a>
+				<a class="nav-item nav-link" href="{{ url_for('gifts.get') }}">Home</a>
+				<a class="nav-item nav-link" href="{{ url_for('categories.get') }}">Categories</a>
 				{% if session.username %}
-				<a class="nav-item nav-link" href="{{ url_for('gifts.show_add_gift') }}">Give something</a>
+				<a class="nav-item nav-link" href="{{ url_for('gifts.add_get') }}">Give something</a>
 				{% endif %}
 			</div>
 
@@ -39,7 +39,7 @@
 			</div>
 			{% else %}
 			<div class="navbar-nav ml-auto text-lganddown-center">
-				<a class="nav-item nav-link" href="{{ url_for('login.show_login') }}">Log in</a>
+				<a class="nav-item nav-link" href="{{ url_for('login.show') }}">Log in</a>
 			</div>
 			{% endif %}
 		</nav>
