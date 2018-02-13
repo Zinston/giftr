@@ -2,49 +2,15 @@
 
 """Serve the app's views on a webserver."""
 
-# For webserver
-from BaseHTTPServer import (BaseHTTPRequestHandler,
-                            HTTPServer)
-import cgi  # Common Gateway Interface
-
-# For CRUD
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from models import (Base,
-                    User,
-                    Gift,
-                    Claim,
-                    Category)
-
 from flask import (Flask,
                    request,
-                   redirect,
-                   url_for,
-                   render_template,
-                   flash,
-                   jsonify,
-                   g,
                    session,
-                   make_response,
-                   abort,
-                   Blueprint)
-
-# For making decorators
-from functools import wraps
+                   abort)
 
 import string
 import random
 
-# Bind database
-engine = create_engine('sqlite:///giftr.db')
-Base.metadata.bind = engine
-DBSession = sessionmaker(bind=engine)
-c = DBSession()
-
-
-# Bind Flask
-app = Flask(__name__, instance_relative_config=True)
-app.config.from_pyfile('flask.cfg')
+import logging
 
 # BLUEPRINTS
 from views.client.gifts.views import gifts_blueprint
@@ -57,6 +23,11 @@ from views.auth.logout.views import logout_blueprint
 from views.api.gifts.views import api_gifts_blueprint
 from views.api.categories.views import api_categories_blueprint
 
+
+# Bind Flask
+app = Flask(__name__, instance_relative_config=True)
+app.config.from_pyfile('flask.cfg')
+
 # register the blueprints
 app.register_blueprint(gifts_blueprint)
 app.register_blueprint(claims_blueprint)
@@ -68,7 +39,6 @@ app.register_blueprint(logout_blueprint)
 app.register_blueprint(api_gifts_blueprint)
 app.register_blueprint(api_categories_blueprint)
 
-# DECORATORS
 
 # CSRF protection
 # Source: http://flask.pocoo.org/snippets/3/
