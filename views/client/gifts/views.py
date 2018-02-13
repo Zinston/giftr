@@ -45,7 +45,7 @@ def login_required(f):
 
 @gifts_blueprint.route('/', methods=['GET'])
 @gifts_blueprint.route('/gifts', methods=['GET'])
-def get_gifts():
+def get():
     """Render all gifts or gifts of category id "cat" if query."""
     categories = c.query(Category).all()
 
@@ -75,42 +75,8 @@ def get_gifts():
                            page="gifts")
 
 
-@gifts_blueprint.route('/gifts/add', methods=['GET'])
-@login_required
-def show_add_gift():
-    """Render form to add a gift.
-
-    Login required.
-    """
-    categories = c.query(Category).all()
-
-    return render_template('add_gift.html',
-                           categories=categories)
-
-
-@gifts_blueprint.route('/gifts/add', methods=['POST'])
-@login_required
-def add_gift():
-    """Add a gift to the database with POST.
-
-    Login required.
-    """
-    gift = Gift(name=request.form.get('name'),
-                picture=request.form.get('picture'),
-                description=request.form.get('description'),
-                category_id=request.form.get('category'),
-                creator_id=session.get('user_id'))
-    c.add(gift)
-    c.commit()
-
-    flash("Thanks for your generosity! %s was successfully added." % gift.name)
-
-    return redirect(url_for('get_gift_byid',
-                            g_id=gift.id))
-
-
 @gifts_blueprint.route('/gifts/<int:g_id>', methods=['GET'])
-def get_gift_byid(g_id):
+def get_byid(g_id):
     """Render a gift of id g_id.
 
     Login required.
@@ -127,9 +93,43 @@ def get_gift_byid(g_id):
                            page="gift")
 
 
+@gifts_blueprint.route('/gifts/add', methods=['GET'])
+@login_required
+def add_get():
+    """Render form to add a gift.
+
+    Login required.
+    """
+    categories = c.query(Category).all()
+
+    return render_template('add_gift.html',
+                           categories=categories)
+
+
+@gifts_blueprint.route('/gifts/add', methods=['POST'])
+@login_required
+def add_post():
+    """Add a gift to the database with POST.
+
+    Login required.
+    """
+    gift = Gift(name=request.form.get('name'),
+                picture=request.form.get('picture'),
+                description=request.form.get('description'),
+                category_id=request.form.get('category'),
+                creator_id=session.get('user_id'))
+    c.add(gift)
+    c.commit()
+
+    flash("Thanks for your generosity! %s was successfully added." % gift.name)
+
+    return redirect(url_for('gifts.get_byid',
+                            g_id=gift.id))
+
+
 @gifts_blueprint.route('/gifts/<int:g_id>/edit', methods=['GET'])
 @login_required
-def show_edit_gift(g_id):
+def edit_get(g_id):
     """Render an edit form for a gift of id g_id.
 
     Login required.
@@ -142,7 +142,7 @@ def show_edit_gift(g_id):
 
     if gift.creator_id != session.get('user_id'):
         flash('You have to be the creator of that gift to see that page.')
-        return redirect(url_for('get_gift_byid',
+        return redirect(url_for('gifts.get_byid',
                                 g_id=gift.id))
 
     categories = c.query(Category).all()
@@ -154,7 +154,7 @@ def show_edit_gift(g_id):
 
 @gifts_blueprint.route('/gifts/<int:g_id>/edit', methods=['POST'])
 @login_required
-def edit_gift(g_id):
+def edit_post(g_id):
     """Edit a gift of id g_id with POST.
 
     Login required.
@@ -167,7 +167,7 @@ def edit_gift(g_id):
 
     if gift.creator_id != session.get('user_id'):
         flash('You have to be the creator of that gift to see that page.')
-        return redirect(url_for('get_gift_byid',
+        return redirect(url_for('gifts.get_byid',
                                 g_id=gift.id))
 
     gift.name = request.form.get('name')
@@ -180,13 +180,13 @@ def edit_gift(g_id):
 
     flash("%s was successfully edited." % gift.name)
 
-    return redirect(url_for('get_gift_byid',
+    return redirect(url_for('gifts.get_byid',
                             g_id=gift.id))
 
 
 @gifts_blueprint.route('/gifts/<int:g_id>/delete', methods=['GET'])
 @login_required
-def show_delete_gift(g_id):
+def delete_get(g_id):
     """Render a delete form for a gift of id g_id.
 
     Login required.
@@ -199,7 +199,7 @@ def show_delete_gift(g_id):
 
     if gift.creator_id != session.get('user_id'):
         flash('You have to be the creator of that gift to see that page.')
-        return redirect(url_for('get_gift_byid',
+        return redirect(url_for('gifts.get_byid',
                                 g_id=gift.id))
 
     return render_template('delete_gift.html',
@@ -208,7 +208,7 @@ def show_delete_gift(g_id):
 
 @gifts_blueprint.route('/gifts/<int:g_id>/delete', methods=['POST'])
 @login_required
-def delete_gift(g_id):
+def delete_post(g_id):
     """Delete a gift of id g_id with POST.
 
     Login required.
@@ -221,7 +221,7 @@ def delete_gift(g_id):
 
     if gift.creator_id != session.get('user_id'):
         flash('You have to be the creator of that gift to see that page.')
-        return redirect(url_for('get_gift_byid',
+        return redirect(url_for('gifts.get_byid',
                                 g_id=gift.id))
 
     c.delete(gift)
@@ -235,4 +235,4 @@ def delete_gift(g_id):
 
     flash("%s was successfully deleted." % gift.name)
 
-    return redirect(url_for('get_gifts'))
+    return redirect(url_for('gifts.get'))
