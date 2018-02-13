@@ -54,7 +54,7 @@ def show_login():
     # If the user is already logged in, redirect them.
     if 'username' in session:
         flash("You're already logged in. Disconnect first.")
-        return redirect(url_for('get_gifts'))
+        return redirect(url_for('gifts.get_gifts'))
 
     state = get_random_string()
 
