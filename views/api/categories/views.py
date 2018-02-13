@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+
+"""Define routes for categories API."""
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import (Base,
@@ -12,7 +16,8 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 c = DBSession()
 
-api_categories_blueprint = Blueprint('api_categories', __name__, template_folder='templates')
+api_categories_blueprint = Blueprint('api_categories', __name__, template_folder='templates')  # noqa
+
 
 # ROUTES
 

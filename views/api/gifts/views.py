@@ -1,26 +1,17 @@
+#!/usr/bin/env python
+
+"""Define routes for gifts API."""
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import (Base,
-                    User,
                     Gift,
                     Claim,
                     Category)
 
-from flask import (Flask,
-                   request,
-                   redirect,
-                   url_for,
-                   render_template,
-                   flash,
+from flask import (request,
                    jsonify,
-                   g,
-                   session,
-                   make_response,
-                   abort,
                    Blueprint)
-
-# For making decorators
-from functools import wraps
 
 # Bind database
 engine = create_engine('sqlite:///giftr.db')
@@ -28,12 +19,13 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 c = DBSession()
 
-api_gifts_blueprint = Blueprint('api_gifts', __name__, template_folder='templates')
+api_gifts_blueprint = Blueprint('api_gifts', __name__, template_folder='templates')  # noqa
+
 
 # ROUTES
 
 @api_gifts_blueprint.route('/api/gifts')
-def api_get_gifts():
+def get_gifts():
     """Return the gifts in json."""
     req_cat = request.args.get('cat')
     categories = c.query(Category).all()
@@ -57,7 +49,7 @@ def api_get_gifts():
 
 
 @api_gifts_blueprint.route('/api/gifts/<int:g_id>')
-def api_get_gift(g_id):
+def get_gift(g_id):
     """Return a gift of id g_id in json.
 
     Argument:
