@@ -1,34 +1,19 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from models import (Base,
-                    User,
-                    Gift,
-                    Claim,
-                    Category)
+#!/usr/bin/env python
 
-from flask import (Flask,
-                   request,
-                   redirect,
+"""Define routes for logout procedures."""
+
+from flask import (redirect,
                    url_for,
-                   render_template,
                    flash,
-                   jsonify,
-                   g,
                    session,
                    make_response,
-                   abort,
                    Blueprint)
 
-# For making decorators
-from functools import wraps
-
-# Bind database
-engine = create_engine('sqlite:///giftr.db')
-Base.metadata.bind = engine
-DBSession = sessionmaker(bind=engine)
-c = DBSession()
+import json
+import requests
 
 logout_blueprint = Blueprint('logout', __name__, template_folder='templates')
+
 
 # ROUTES
 
@@ -61,7 +46,7 @@ def disconnect():
         flash("You have successfully logged out.")
 
         # Redirect them
-        return redirect(url_for('get_gifts'))
+        return redirect(url_for('gifts.get_gifts'))
 
     # If there's no user...
     else:
@@ -69,7 +54,7 @@ def disconnect():
         flash("You were not logged in to begin with...")
 
         # Redirect them
-        return redirect(url_for('get_gifts'))
+        return redirect(url_for('gifts.get_gifts'))
 
 
 @logout_blueprint.route('/gdisconnect')
