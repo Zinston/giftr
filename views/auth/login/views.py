@@ -5,26 +5,25 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import (Base,
-                    User,
-                    Gift,
-                    Claim,
-                    Category)
+                    User)
 
-from flask import (Flask,
-                   request,
+from flask import (request,
                    redirect,
                    url_for,
                    render_template,
                    flash,
-                   jsonify,
-                   g,
                    session,
                    make_response,
-                   abort,
                    Blueprint)
 
-# For making decorators
-from functools import wraps
+# For OAuth
+from oauth2client.client import (flow_from_clientsecrets,
+                                 FlowExchangeError)
+import random
+import string
+import json
+import requests
+import httplib2
 
 # Bind database
 engine = create_engine('sqlite:///giftr.db')
@@ -33,6 +32,19 @@ DBSession = sessionmaker(bind=engine)
 c = DBSession()
 
 login_blueprint = Blueprint('login', __name__, template_folder='templates')
+
+
+# API Secrets and IDs
+def get_google_client_id(json_file_name):
+    """Get client id for Google OAuth2, from provided json file."""
+    google_client_secrets_f = open(json_file_name, 'r')
+    google_client_secrets = google_client_secrets_f.read()
+    google_client_secrets_json = json.loads(google_client_secrets)
+    return google_client_secrets_json['web']['client_id']
+
+
+CLIENT_ID = get_google_client_id('google_client_secrets.json')
+
 
 # ROUTES
 

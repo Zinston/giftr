@@ -29,17 +29,6 @@ from flask import (Flask,
                    abort,
                    Blueprint)
 
-# For OAuth
-from oauth2client.client import (flow_from_clientsecrets,
-                                 FlowExchangeError)
-import random
-import string
-import json
-import requests
-import httplib2
-
-import logging
-
 # For making decorators
 from functools import wraps
 
@@ -76,21 +65,7 @@ app.register_blueprint(logout_blueprint)
 app.register_blueprint(api_gifts_blueprint)
 app.register_blueprint(api_categories_blueprint)
 
-
-# API Secrets and IDs
-def get_google_client_id(json_file_name):
-    """Get client id for Google OAuth2, from provided json file."""
-    google_client_secrets_f = open(json_file_name, 'r')
-    google_client_secrets = google_client_secrets_f.read()
-    google_client_secrets_json = json.loads(google_client_secrets)
-    return google_client_secrets_json['web']['client_id']
-
-
-CLIENT_ID = get_google_client_id('google_client_secrets.json')
-
-
 # DECORATORS
-
 
 # CSRF protection
 # Source: http://flask.pocoo.org/snippets/3/
