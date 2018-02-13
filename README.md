@@ -14,7 +14,8 @@ It's a simple catalog of gifts. Want it? Claim it. The "gifter" will then be abl
 			 "app_id": "YOUR_APP_ID",
 			 "app_secret": "YOUR_APP_SECRET"
 			}
-	}```
+	}
+	```
 
 * Configure a project for [Google Sign-In](https://developers.google.com/identity/sign-in/web/sign-in) (don't forget to set it up for http://localhost:8080)
 * Download your Google credentials and save them in a `google_client_secrets.json` file in the root directory. They should have the following form:
@@ -29,7 +30,8 @@ It's a simple catalog of gifts. Want it? Claim it. The "gifter" will then be abl
      		 "client_secret": "YOUR_CLIENT_SECRET",
      		 "redirect_uris": ["http://localhost:8080"]
      		}
-    }```
+    }
+    ```
 
 * Run the app with python 2.7: `python views.py`
 * It's running on http://localhost:8080
