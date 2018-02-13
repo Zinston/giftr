@@ -22,7 +22,7 @@ api_categories_blueprint = Blueprint('api_categories', __name__, template_folder
 # ROUTES
 
 @api_categories_blueprint.route('/api/categories')
-def get_categories():
+def get():
     """Return the categories in json."""
     # Query database
     categories = c.query(Category).all()
@@ -35,7 +35,7 @@ def get_categories():
 
 
 @api_categories_blueprint.route('/api/categories/<int:cat_id>')
-def get_category(cat_id):
+def get_byid(cat_id):
     """Return a category of id cat_id in json.
 
     Argument:
