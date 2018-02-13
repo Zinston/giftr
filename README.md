@@ -10,26 +10,26 @@ It's a simple catalog of gifts. Want it? Claim it. The "gifter" will then be abl
 * Save your Facebook credentials in a `fb_client_secrets.json` file in the root directory, with the following form:
 
     ```{
-	 "web": {
-			 "app_id": "YOUR_APP_ID",
-			 "app_secret": "YOUR_APP_SECRET"
-			}
-	}
-	```
+     "web": {
+             "app_id": "YOUR_APP_ID",
+             "app_secret": "YOUR_APP_SECRET"
+            }
+    }
+    ```
 
 * Configure a project for [Google Sign-In](https://developers.google.com/identity/sign-in/web/sign-in) (don't forget to set it up for http://localhost:8080)
 * Download your Google credentials and save them in a `google_client_secrets.json` file in the root directory. They should have the following form:
 
     ```{
      "web": {
-     		 "client_id": "YOUR_CLIENT_ID.apps.googleusercontent.com",
-     		 "project_id":"YOUR_PROJECT_ID",
-     		 "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-     		 "token_uri":"https://accounts.google.com/o/oauth2/token",
-     		 "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-     		 "client_secret": "YOUR_CLIENT_SECRET",
-     		 "redirect_uris": ["http://localhost:8080"]
-     		}
+             "client_id": "YOUR_CLIENT_ID.apps.googleusercontent.com",
+             "project_id":"YOUR_PROJECT_ID",
+             "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+             "token_uri":"https://accounts.google.com/o/oauth2/token",
+             "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+             "client_secret": "YOUR_CLIENT_SECRET",
+             "redirect_uris": ["http://localhost:8080"]
+            }
     }
     ```
 
@@ -43,6 +43,17 @@ No functionality has been implemented yet to:
 * accept/reject claims
 * contact users
 * notify users of claims
+
+## API
+The API can be used to get JSON data containing the gifts and categories from GIFTR's database. Here are the available endpoints:
+
+| Path                         | Method | Returns                         | Notes                                                      |
+| ---------------------------- |:------:| ------------------------------- | ----------------------------------------------------------:|
+| /api/gifts                   | GET    | All gifts in JSON               | Add cat=n as query string to get all gifts from category n |
+| /api/gifts/<int:g_id>        | GET    | A gift of ID g_id in JSON       |                                                            |
+| /api/categories              | GET    | All categories in JSON          |                                                            |
+| /api/categories/<int:cat_id> | GET    | A category of ID cat_id in JSON | 
+
 
 ## Contributing
 Ideas, contributions and improvements are more than welcome. When adding a feature, please create a separate topic branch and first look at the Issues to find out if someone else is working on it already.

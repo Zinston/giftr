@@ -1007,7 +1007,7 @@ def api_get_gift(g_id):
 
 @app.route('/api/categories')
 def api_get_categories():
-    """Return the gifts in json."""
+    """Return the categories in json."""
     # Query database
     categories = c.query(Category).all()
 
