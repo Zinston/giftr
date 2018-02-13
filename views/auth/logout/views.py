@@ -1,4 +1,38 @@
-@app.route('/disconnect')
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from models import (Base,
+                    User,
+                    Gift,
+                    Claim,
+                    Category)
+
+from flask import (Flask,
+                   request,
+                   redirect,
+                   url_for,
+                   render_template,
+                   flash,
+                   jsonify,
+                   g,
+                   session,
+                   make_response,
+                   abort,
+                   Blueprint)
+
+# For making decorators
+from functools import wraps
+
+# Bind database
+engine = create_engine('sqlite:///giftr.db')
+Base.metadata.bind = engine
+DBSession = sessionmaker(bind=engine)
+c = DBSession()
+
+logout_blueprint = Blueprint('logout', __name__, template_folder='templates')
+
+# ROUTES
+
+@logout_blueprint.route('/disconnect')
 def disconnect():
     """Redirect to appropriate disconnect function and clear session."""
     # If there's a user...
@@ -38,7 +72,7 @@ def disconnect():
         return redirect(url_for('get_gifts'))
 
 
-@app.route('/gdisconnect')
+@logout_blueprint.route('/gdisconnect')
 def gdisconnect():
     """Disconnect a user using Google OAuth."""
     # Disconnect = revoke a user's token and revoque their session
@@ -82,7 +116,7 @@ def gdisconnect():
     return response
 
 
-@app.route('/fbdisconnect')
+@logout_blueprint.route('/fbdisconnect')
 def fbdisconnect():
     """Disconnect a user using Facebook OAuth."""
     # PART 1: Check that there is a user to disconnect

@@ -49,14 +49,32 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 c = DBSession()
 
+
 # Bind Flask
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_pyfile('flask.cfg')
 
 # BLUEPRINTS
 from views.client.gifts.views import gifts_blueprint
+from views.client.claims.views import claims_blueprint
+from views.client.categories.views import categories_blueprint
+
+from views.auth.login.views import login_blueprint
+from views.auth.logout.views import logout_blueprint
+
+from views.api.gifts.views import api_gifts_blueprint
+from views.api.categories.views import api_categories_blueprint
+
 # register the blueprints
 app.register_blueprint(gifts_blueprint)
+app.register_blueprint(claims_blueprint)
+app.register_blueprint(categories_blueprint)
+
+app.register_blueprint(login_blueprint)
+app.register_blueprint(logout_blueprint)
+
+app.register_blueprint(api_gifts_blueprint)
+app.register_blueprint(api_categories_blueprint)
 
 
 # API Secrets and IDs
@@ -97,31 +115,6 @@ def generate_csrf_token():
 
 
 app.jinja_env.globals['csrf_token'] = generate_csrf_token
-
-
-# ROUTES
-# Client routes
-# Gifts
-
-
-
-# Claims
-
-
-
-# Categories
-
-
-
-# AUTH
-
-# Log in
-
-
-# Log out
-
-
-# API Routes
 
 
 # HELPERS

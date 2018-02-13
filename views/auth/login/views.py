@@ -1,4 +1,38 @@
-@app.route('/login', methods=['GET'])
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from models import (Base,
+                    User,
+                    Gift,
+                    Claim,
+                    Category)
+
+from flask import (Flask,
+                   request,
+                   redirect,
+                   url_for,
+                   render_template,
+                   flash,
+                   jsonify,
+                   g,
+                   session,
+                   make_response,
+                   abort,
+                   Blueprint)
+
+# For making decorators
+from functools import wraps
+
+# Bind database
+engine = create_engine('sqlite:///giftr.db')
+Base.metadata.bind = engine
+DBSession = sessionmaker(bind=engine)
+c = DBSession()
+
+login_blueprint = Blueprint('login', __name__, template_folder='templates')
+
+# ROUTES
+
+@login_blueprint.route('/login', methods=['GET'])
 def show_login():
     """Render login page with a generated random state variable."""
     # If the user is already logged in, redirect them.
@@ -16,7 +50,7 @@ def show_login():
                            user='logging in')
 
 
-@app.route('/gconnect', methods=['GET', 'POST'])
+@login_blueprint.route('/gconnect', methods=['GET', 'POST'])
 def gconnect():
     """Login and/or register a user using Google OAuth."""
     # Check if the posted STATE matches the session state
@@ -169,7 +203,7 @@ def gconnect():
     return make_response(render_template('login_success.html'))
 
 
-@app.route('/fbconnect', methods=['GET', 'POST'])
+@login_blueprint.route('/fbconnect', methods=['GET', 'POST'])
 def fbconnect():
     """Login and/or register a user using Facebook OAuth."""
     # 1. Check if the posted STATE matches the session state

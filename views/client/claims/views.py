@@ -1,4 +1,50 @@
-@app.route('/gifts/claims', methods=['GET'])
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from models import (Base,
+                    User,
+                    Gift,
+                    Claim,
+                    Category)
+
+from flask import (Flask,
+                   request,
+                   redirect,
+                   url_for,
+                   render_template,
+                   flash,
+                   jsonify,
+                   g,
+                   session,
+                   make_response,
+                   abort,
+                   Blueprint)
+
+# For making decorators
+from functools import wraps
+
+# Bind database
+engine = create_engine('sqlite:///giftr.db')
+Base.metadata.bind = engine
+DBSession = sessionmaker(bind=engine)
+c = DBSession()
+
+claims_blueprint = Blueprint('claims', __name__, template_folder='templates')
+
+# DECORATORS
+
+def login_required(f):
+    """Redirect to login page if the user is not logged in (decorator)."""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'username' not in session:
+            flash('You need to be logged in to see that page.')
+            return redirect(url_for('show_login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+# ROUTES
+
+@claims_blueprint.route('/gifts/claims', methods=['GET'])
 def get_all_claims():
     """Render all claims in the database."""
     claims = c.query(Claim).all()
@@ -7,7 +53,7 @@ def get_all_claims():
                            claims=claims)
 
 
-@app.route('/gifts/<int:g_id>/claims', methods=['GET'])
+@claims_blueprint.route('/gifts/<int:g_id>/claims', methods=['GET'])
 def get_claims(g_id):
     """Render all claims on a gift of id g_id.
 
@@ -22,7 +68,7 @@ def get_claims(g_id):
                            claims=claims)
 
 
-@app.route('/gifts/<int:g_id>/claims/add', methods=['GET'])
+@claims_blueprint.route('/gifts/<int:g_id>/claims/add', methods=['GET'])
 @login_required
 def show_add_claim(g_id):
     """Render form to add a claim on a gift of id g_id.
@@ -44,7 +90,7 @@ def show_add_claim(g_id):
                            gift=gift)
 
 
-@app.route('/gifts/<int:g_id>/claims', methods=['POST'])
+@claims_blueprint.route('/gifts/<int:g_id>/claims', methods=['POST'])
 @login_required
 def add_claim(g_id):
     """Add a claim on a gift of id g_id to the database with POST.
@@ -76,7 +122,7 @@ def add_claim(g_id):
                             c_id=claim.id))
 
 
-@app.route('/gifts/<int:g_id>/claims/<int:c_id>', methods=['GET'])
+@claims_blueprint.route('/gifts/<int:g_id>/claims/<int:c_id>', methods=['GET'])
 def get_claim_byid(g_id, c_id):
     """Render a claim of id c_id on a gift of id g_id.
 
@@ -92,7 +138,7 @@ def get_claim_byid(g_id, c_id):
                            claim=claim)
 
 
-@app.route('/gifts/<int:g_id>/claims/<int:c_id>/edit', methods=['GET'])
+@claims_blueprint.route('/gifts/<int:g_id>/claims/<int:c_id>/edit', methods=['GET'])
 @login_required
 def show_edit_claim(g_id, c_id):
     """Render edit form for a claim of id c_id on a gift of id g_id.
@@ -115,7 +161,7 @@ def show_edit_claim(g_id, c_id):
                            claim=claim)
 
 
-@app.route('/gifts/<int:g_id>/claims/<int:c_id>/edit', methods=['POST'])
+@claims_blueprint.route('/gifts/<int:g_id>/claims/<int:c_id>/edit', methods=['POST'])
 @login_required
 def edit_claim(g_id, c_id):
     """Edit a claim of id c_id on a gift of id g_id with POST.
@@ -145,7 +191,7 @@ def edit_claim(g_id, c_id):
                             c_id=c_id))
 
 
-@app.route('/gifts/<int:g_id>/claims/<int:c_id>/delete', methods=['GET'])
+@claims_blueprint.route('/gifts/<int:g_id>/claims/<int:c_id>/delete', methods=['GET'])
 @login_required
 def show_delete_claim(g_id, c_id):
     """Render delete form for a claim with c_id on a gift with g_id.
@@ -168,7 +214,7 @@ def show_delete_claim(g_id, c_id):
                            claim=claim)
 
 
-@app.route('/gifts/<int:g_id>/claims/<int:c_id>/delete', methods=['POST'])
+@claims_blueprint.route('/gifts/<int:g_id>/claims/<int:c_id>/delete', methods=['POST'])
 @login_required
 def delete_claim(g_id, c_id):
     """Delete a claim of id c_id on a gift of id g_id with POST.

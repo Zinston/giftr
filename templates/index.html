@@ -15,12 +15,12 @@
 	</head>
 	<body>
 		<nav class="navbar navbar-expand-xl navbar-light bg-light fixed-top">
-			<a class="navbar-brand" href="{{ url_for('get_gifts') }}">Giftr</a>
+			<a class="navbar-brand" href="{{ url_for('gifts.get_gifts') }}">Giftr</a>
 			<div class="navbar-nav">
-				<a class="nav-item nav-link" href="{{ url_for('get_gifts') }}">Home</a>
-				<a class="nav-item nav-link" href="{{ url_for('get_categories') }}">Categories</a>
+				<a class="nav-item nav-link" href="{{ url_for('gifts.get_gifts') }}">Home</a>
+				<a class="nav-item nav-link" href="{{ url_for('categories.get_categories') }}">Categories</a>
 				{% if session.username %}
-				<a class="nav-item nav-link" href="{{ url_for('show_add_gift') }}">Give something</a>
+				<a class="nav-item nav-link" href="{{ url_for('gifts.show_add_gift') }}">Give something</a>
 				{% endif %}
 			</div>
 
@@ -31,7 +31,7 @@
 			<div class="ml-auto d-flex flex-row justify-content-center mt-3 mt-xl-0">
 				<div class="d-flex flex-column mr-2">
 					<div class="text-right">{{ session.username }}</div>
-					<div class="text-right"><small><a href="{{ url_for('disconnect') }}">Log out</a></small></div>
+					<div class="text-right"><small><a href="{{ url_for('logout.disconnect') }}">Log out</a></small></div>
 				</div>
 				<div class="d-flex flex-column">
 					<img class="img-fluid navbar-img" src="{{ session.picture }}">
@@ -39,7 +39,7 @@
 			</div>
 			{% else %}
 			<div class="navbar-nav ml-auto text-lganddown-center">
-				<a class="nav-item nav-link" href="{{ url_for('show_login') }}">Log in</a>
+				<a class="nav-item nav-link" href="{{ url_for('login.show_login') }}">Log in</a>
 			</div>
 			{% endif %}
 		</nav>
