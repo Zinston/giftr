@@ -961,7 +961,7 @@ def fbdisconnect():
 
 # API Routes
 @app.route('/api/gifts')
-def get_gifts_json():
+def api_get_gifts():
     """Return the gifts in json."""
     req_cat = request.args.get('cat')
     categories = c.query(Category).all()
@@ -982,7 +982,7 @@ def get_gifts_json():
 
 
 @app.route('/api/gifts/<int:g_id>')
-def get_gift_json(g_id):
+def api_get_gift(g_id):
     """Return a gift of id g_id in json.
 
     Argument:
@@ -1004,7 +1004,7 @@ def get_gift_json(g_id):
 
 
 @app.route('/api/categories')
-def get_categories_json():
+def api_get_categories():
     """Return the gifts in json."""
     # Query database
     categories = c.query(Category).all()
@@ -1017,7 +1017,7 @@ def get_categories_json():
 
 
 @app.route('/api/categories/<int:cat_id>')
-def get_category_json(cat_id):
+def api_get_category(cat_id):
     """Return a category of id cat_id in json.
 
     Argument:
