@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 """Serve the app's views on a webserver."""
 
 # For webserver

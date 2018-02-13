@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 """Setup a database with the app's models."""
 
 # CONFIGURATION #
