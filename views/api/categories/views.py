@@ -1,26 +1,10 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import (Base,
-                    User,
-                    Gift,
-                    Claim,
                     Category)
 
-from flask import (Flask,
-                   request,
-                   redirect,
-                   url_for,
-                   render_template,
-                   flash,
-                   jsonify,
-                   g,
-                   session,
-                   make_response,
-                   abort,
+from flask import (jsonify,
                    Blueprint)
-
-# For making decorators
-from functools import wraps
 
 # Bind database
 engine = create_engine('sqlite:///giftr.db')
@@ -33,7 +17,7 @@ api_categories_blueprint = Blueprint('api_categories', __name__, template_folder
 # ROUTES
 
 @api_categories_blueprint.route('/api/categories')
-def api_get_categories():
+def get_categories():
     """Return the categories in json."""
     # Query database
     categories = c.query(Category).all()
@@ -46,7 +30,7 @@ def api_get_categories():
 
 
 @api_categories_blueprint.route('/api/categories/<int:cat_id>')
-def api_get_category(cat_id):
+def get_category(cat_id):
     """Return a category of id cat_id in json.
 
     Argument:
