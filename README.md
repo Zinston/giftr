@@ -6,7 +6,7 @@ It's a simple catalog of gifts. Want it? Claim it. The "gifter" will then be abl
 * Clone this repository: `git clone https://github.com/Zinston/giftr`
 * Install dependencies: `pip install -r requirements.txt`
 * Configure a project for [Facebook Sign-In](https://developers.facebook.com/products/account-creation) (don't forget to set it up for http://localhost:8080)
-# Save your Facebook credentials in a `fb_client_secrets.json` file in the root directory, with the following form:
+* Save your Facebook credentials in a `fb_client_secrets.json` file in the root directory, with the following form:
     {
 	 "web": {
 			 "app_id": "YOUR_APP_ID",
@@ -14,7 +14,7 @@ It's a simple catalog of gifts. Want it? Claim it. The "gifter" will then be abl
 			}
 	}
 * Configure a project for [Google Sign-In](https://developers.google.com/identity/sign-in/web/sign-in) (don't forget to set it up for http://localhost:8080)
-# Download your Google credentials and save them in a `google_client_secrets.json` file in the root directory. They should have the following form:
+* Download your Google credentials and save them in a `google_client_secrets.json` file in the root directory. They should have the following form:
     {
      "web": {
      		 "client_id": "YOUR_CLIENT_ID.apps.googleusercontent.com",
