@@ -49,12 +49,17 @@ c = DBSession()
 # Bind Flask
 app = Flask(__name__)
 
+
 # API Secrets and IDs
-# Get client id for Google OAuth2, from json file
-google_client_secrets_f = open('google_client_secrets.json', 'r')
-google_client_secrets = google_client_secrets_f.read()
-google_client_secrets_json = json.loads(google_client_secrets)
-CLIENT_ID = google_client_secrets_json['web']['client_id']
+def get_google_client_id(json_file_name):
+    """Get client id for Google OAuth2, from provided json file."""
+    google_client_secrets_f = open(json_file_name, 'r')
+    google_client_secrets = google_client_secrets_f.read()
+    google_client_secrets_json = json.loads(google_client_secrets)
+    return google_client_secrets_json['web']['client_id']
+
+
+CLIENT_ID = get_google_client_id('google_client_secrets.json')
 
 
 # DECORATORS
@@ -73,9 +78,10 @@ def login_required(f):
 # Source: http://flask.pocoo.org/snippets/3/
 @app.before_request
 def csrf_protect():
-    if request.method == "POST":
+    if request.method == "POST" and request.form:
         token = session.pop('_csrf_token', None)
         if not token or token != request.form.get('_csrf_token'):
+            print "CSRF PROTECTED!"
             abort(403)
 
 
