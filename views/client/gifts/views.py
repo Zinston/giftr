@@ -1,22 +1,20 @@
+#!/usr/bin/env python
+
+"""Define routes for CRUD operations on gifts."""
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import (Base,
-                    User,
                     Gift,
                     Claim,
                     Category)
 
-from flask import (Flask,
-                   request,
+from flask import (request,
                    redirect,
                    url_for,
                    render_template,
                    flash,
-                   jsonify,
-                   g,
                    session,
-                   make_response,
-                   abort,
                    Blueprint)
 
 # For making decorators
@@ -30,6 +28,7 @@ c = DBSession()
 
 gifts_blueprint = Blueprint('gifts', __name__, template_folder='templates')
 
+
 # DECORATORS
 def login_required(f):
     """Redirect to login page if the user is not logged in (decorator)."""
@@ -40,6 +39,7 @@ def login_required(f):
             return redirect(url_for('show_login'))
         return f(*args, **kwargs)
     return decorated_function
+
 
 # ROUTES
 
