@@ -33,7 +33,7 @@ It's a simple catalog of gifts. Want it? Claim it. The "gifter" will then be abl
     }
     ```
 
-* Run the app with python 2.7: `python views.py`
+* Run the app with python 2.7: `python run.py`
 * It's running on http://localhost:8080
 
 ## Limitations
