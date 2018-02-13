@@ -37,6 +37,8 @@ import json
 import requests
 import httplib2
 
+import logging
+
 # For making decorators
 from functools import wraps
 
@@ -82,7 +84,10 @@ def csrf_protect():
     if request.method == "POST" and request.form:
         token = session.pop('_csrf_token', None)
         if not token or token != request.form.get('_csrf_token'):
-            print "CSRF PROTECTED!"
+            log = 'CSRF Protection blocked a POST request.'
+            log += '\nRequest was: ' + str(dict(request.form))
+            log += '\nResponded with error 403.'
+            logging.warning(log)
             abort(403)
 
 
@@ -744,7 +749,7 @@ def gconnect():
     # and if so, if the id of the token from the CREDENTIALS OBJECT
     # matches the id stored in the session
     if stored_access_token is not None and gplus_id == stored_gplus_id:
-        print 'Current user is already connected.'
+        # Current user is already connected.
 
         return make_response(render_template('login_success.html'))
 
