@@ -98,6 +98,9 @@ def get_gifts():
     categories = c.query(Category).all()
 
     req_cat = request.args.get('cat')
+
+    # If there is a valid int as query string,
+    # filter the gifts by category
     try:
         req_cat = int(req_cat)
         if req_cat > 0 and req_cat <= len(categories):
@@ -984,6 +987,9 @@ def api_get_gifts():
     """Return the gifts in json."""
     req_cat = request.args.get('cat')
     categories = c.query(Category).all()
+
+    # If there is a valid int as query string,
+    # filter the gifts by category
     try:
         req_cat = int(req_cat)
         if req_cat > 0 and req_cat <= len(categories):
