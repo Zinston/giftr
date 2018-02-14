@@ -5,6 +5,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import (Base,
+                    User,
                     Gift,
                     Claim,
                     Category)
@@ -97,11 +98,13 @@ def get_byid(g_id):
 def get_byuserid(u_id):
     """Render all gifts created by a user of id u_id."""
     gifts = c.query(Gift).filter_by(creator_id=u_id).all()
+    user = c.query(User).filter_by(id=u_id).first()
     categories = c.query(Category).all()
 
     return render_template('gifts.html',
                            gifts=gifts,
                            categories=categories,
+                           user=user,
                            page="usergifts")
 
 
