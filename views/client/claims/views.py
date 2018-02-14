@@ -160,6 +160,8 @@ def get_byid(g_id, c_id, claim):
     Arguments:
     g_id (int): the id of the desired gift.
     c_id (int): the id of the desired claim.
+    claim (object): generally passed through the @include_claim decorator,
+                    contains a claim object of id c_id.
     """
     return render_template('claim.html',
                            claim=claim)
@@ -178,6 +180,8 @@ def edit_get(g_id, c_id, claim):
     Arguments:
     g_id (int): the id of the desired gift.
     c_id (int): the id of the desired claim.
+    claim (object): generally passed through the @include_claim decorator,
+                    contains a claim object of id c_id.
     """
     return render_template('edit_claim.html',
                            claim=claim)
@@ -195,6 +199,9 @@ def edit_post(g_id, c_id, claim):
 
     Arguments:
     g_id (int): the id of the desired gift.
+    c_id (int): the id of the desired claim.
+    claim (object): generally passed through the @include_claim decorator,
+                    contains a claim object of id c_id.
     """
     claim.message = request.form.get('message')
 
@@ -221,6 +228,8 @@ def delete_get(g_id, c_id, claim):
     Arguments:
     g_id (int): the id of the desired gift.
     c_id (int): the id of the desired claim.
+    claim (object): generally passed through the @include_claim decorator,
+                    contains a claim object of id c_id.
     """
     return render_template('delete_claim.html',
                            claim=claim)
@@ -238,6 +247,9 @@ def delete_post(g_id, c_id, claim):
 
     Arguments:
     g_id (int): the id of the desired gift.
+    c_id (int): the id of the desired claim.
+    claim (object): generally passed through the @include_claim decorator,
+                    contains a claim object of id c_id.
     """
     gift_name = claim.gift.name
 
