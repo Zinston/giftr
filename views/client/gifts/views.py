@@ -43,6 +43,7 @@ def login_required(f):
 
 
 def include_gift(f):
+    """Take a g_id kwarg and return a gift object (decorator)."""
     @wraps(f)
     def decorated_function(*args, **kwargs):
         g_id = kwargs['g_id']
@@ -57,6 +58,7 @@ def include_gift(f):
 
 
 def include_categories(f):
+    """Return an object with all categories (decorator)."""
     @wraps(f)
     def decorated_function(*args, **kwargs):
         categories = c.query(Category).all()
@@ -67,6 +69,7 @@ def include_categories(f):
 
 
 def creator_required(f):
+    """Take a gift kwarg and redirect to gifts.getbyid if user is not that gift's creator (decorator)."""  # noqa
     @wraps(f)
     def decorated_function(*args, **kwargs):
         gift = kwargs['gift']
@@ -133,7 +136,7 @@ def get_byid(g_id, gift, categories):
 @include_categories
 def get_byuserid(u_id, categories):
     """Render all gifts created by a user of id u_id."""
-    gifts = c.query(Gift).filter_by(creator_id=u_id).order_by(Gift.created_at.desc()).all()
+    gifts = c.query(Gift).filter_by(creator_id=u_id).order_by(Gift.created_at.desc()).all()  # noqa
     user = c.query(User).filter_by(id=u_id).first()
 
     return render_template('gifts.html',
