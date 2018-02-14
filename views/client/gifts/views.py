@@ -93,6 +93,18 @@ def get_byid(g_id):
                            page="gift")
 
 
+@gifts_blueprint.route('/gifts/user/<int:u_id>', methods=['GET'])
+def get_byuserid(u_id):
+    """Render all gifts created by a user of id u_id."""
+    gifts = c.query(Gift).filter_by(creator_id=u_id).all()
+    categories = c.query(Category).all()
+
+    return render_template('gifts.html',
+                           gifts=gifts,
+                           categories=categories,
+                           page="usergifts")
+
+
 @gifts_blueprint.route('/gifts/add', methods=['GET'])
 @login_required
 def add_get():
