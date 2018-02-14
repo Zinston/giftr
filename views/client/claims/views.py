@@ -41,6 +41,35 @@ def login_required(f):
     return decorated_function
 
 
+def include_claim(f):
+    """Take a c_id kwarg and return a claim object (decorator)."""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        c_id = kwargs['c_id']
+        gift = c.query(Claim).filter_by(id=c_id).one_or_none()
+        if not claim:
+            flash('There\'s no claim here.')
+            return redirect(url_for('claims.get'))
+        # pass along the claim object to the next function
+        kwargs['claim'] = claim
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+def creator_required(f):
+    """Take a claim kwarg and redirect to claims.getbyid if user is not that claim's creator (decorator)."""  # noqa
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        claim = kwargs['claim']
+
+        if claim.creator_id != session.get('user_id'):
+            flash('You have to be the creator of that claim to see that page.')
+            return redirect(url_for('claims.get_byid',
+                                    c_id=claim.id))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
 # ROUTES
 
 @claims_blueprint.route('/gifts/claims', methods=['GET'])
@@ -122,7 +151,8 @@ def add_post(g_id):
 
 
 @claims_blueprint.route('/gifts/<int:g_id>/claims/<int:c_id>', methods=['GET'])
-def get_byid(g_id, c_id):
+@include_claim
+def get_byid(g_id, c_id, claim):
     """Render a claim of id c_id on a gift of id g_id.
 
     Login required.
@@ -131,15 +161,15 @@ def get_byid(g_id, c_id):
     g_id (int): the id of the desired gift.
     c_id (int): the id of the desired claim.
     """
-    claim = c.query(Claim).filter_by(id=c_id).first()
-
     return render_template('claim.html',
                            claim=claim)
 
 
 @claims_blueprint.route('/gifts/<int:g_id>/claims/<int:c_id>/edit', methods=['GET'])  # noqa
 @login_required
-def edit_get(g_id, c_id):
+@include_claim
+@creator_required
+def edit_get(g_id, c_id, claim):
     """Render edit form for a claim of id c_id on a gift of id g_id.
 
     Login required.
@@ -149,20 +179,15 @@ def edit_get(g_id, c_id):
     g_id (int): the id of the desired gift.
     c_id (int): the id of the desired claim.
     """
-    claim = c.query(Claim).filter_by(id=c_id).first()
-
-    if claim.creator_id != session.get('user_id'):
-        flash('You have to be the creator of that claim to see that page.')
-        return redirect(url_for('claims.get_byid',
-                                c_id=claim.id))
-
     return render_template('edit_claim.html',
                            claim=claim)
 
 
 @claims_blueprint.route('/gifts/<int:g_id>/claims/<int:c_id>/edit', methods=['POST'])  # noqa
 @login_required
-def edit_post(g_id, c_id):
+@include_claim
+@creator_required
+def edit_post(g_id, c_id, claim):
     """Edit a claim of id c_id on a gift of id g_id with POST.
 
     Login required.
@@ -171,13 +196,6 @@ def edit_post(g_id, c_id):
     Arguments:
     g_id (int): the id of the desired gift.
     """
-    claim = c.query(Claim).filter_by(id=c_id).first()
-
-    if claim.creator_id != session.get('user_id'):
-        flash('You have to be the creator of that claim to see that page.')
-        return redirect(url_for('claims.get_byid',
-                                c_id=claim.id))
-
     claim.message = request.form.get('message')
 
     c.add(claim)
@@ -192,7 +210,9 @@ def edit_post(g_id, c_id):
 
 @claims_blueprint.route('/gifts/<int:g_id>/claims/<int:c_id>/delete', methods=['GET'])  # noqa
 @login_required
-def delete_get(g_id, c_id):
+@include_claim
+@creator_required
+def delete_get(g_id, c_id, claim):
     """Render delete form for a claim with c_id on a gift with g_id.
 
     Login required.
@@ -202,20 +222,15 @@ def delete_get(g_id, c_id):
     g_id (int): the id of the desired gift.
     c_id (int): the id of the desired claim.
     """
-    claim = c.query(Claim).filter_by(id=c_id).first()
-
-    if claim.creator_id != session.get('user_id'):
-        flash('You have to be the creator of that claim to see that page.')
-        return redirect(url_for('claims.get_byid',
-                                c_id=claim.id))
-
     return render_template('delete_claim.html',
                            claim=claim)
 
 
 @claims_blueprint.route('/gifts/<int:g_id>/claims/<int:c_id>/delete', methods=['POST'])  # noqa
 @login_required
-def delete_post(g_id, c_id):
+@include_claim
+@creator_required
+def delete_post(g_id, c_id, claim):
     """Delete a claim of id c_id on a gift of id g_id with POST.
 
     Login required.
@@ -224,13 +239,6 @@ def delete_post(g_id, c_id):
     Arguments:
     g_id (int): the id of the desired gift.
     """
-    claim = c.query(Claim).filter_by(id=c_id).first()
-
-    if claim.creator_id != session.get('user_id'):
-        flash('You have to be the creator of that claim to see that page.')
-        return redirect(url_for('claims.get_byid',
-                                c_id=claim.id))
-
     gift_name = claim.gift.name
 
     c.delete(claim)
