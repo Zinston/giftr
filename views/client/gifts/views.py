@@ -88,7 +88,13 @@ def creator_required(f):
 @gifts_blueprint.route('/gifts', methods=['GET'])
 @include_categories
 def get(categories):
-    """Render all gifts or gifts of category id "cat" if query."""
+    """Render all gifts or gifts of category id "cat" if query.
+
+    Argument:
+    categories (object): generally passed through the
+                         @include_categories decorator,
+                         contains all categories in the database.
+    """
     req_cat = request.args.get('cat')
 
     # If there is a valid int as query string,
@@ -123,8 +129,13 @@ def get_byid(g_id, gift, categories):
 
     Login required.
 
-    Argument:
+    Arguments:
     g_id (int): the id of the desired gift.
+    gift (object): generally passed through the @include_gift decorator,
+                   contains a gift object of id g_id.
+    categories (object): generally passed through the
+                         @include_categories decorator,
+                         contains all categories in the database.
     """
     return render_template('gift.html',
                            gift=gift,
@@ -135,7 +146,14 @@ def get_byid(g_id, gift, categories):
 @gifts_blueprint.route('/gifts/user/<int:u_id>', methods=['GET'])
 @include_categories
 def get_byuserid(u_id, categories):
-    """Render all gifts created by a user of id u_id."""
+    """Render all gifts created by a user of id u_id.
+
+    Arguments:
+    u_id (int): the id of the desired user.
+    categories (object): generally passed through the
+                         @include_categories decorator,
+                         contains all categories in the database.
+    """
     gifts = c.query(Gift).filter_by(creator_id=u_id).order_by(Gift.created_at.desc()).all()  # noqa
     user = c.query(User).filter_by(id=u_id).first()
 
@@ -153,6 +171,11 @@ def add_get(categories):
     """Render form to add a gift.
 
     Login required.
+
+    Argument:
+    categories (object): generally passed through the
+                         @include_categories decorator,
+                         contains all categories in the database.
     """
     return render_template('add_gift.html',
                            categories=categories)
@@ -192,6 +215,11 @@ def edit_get(g_id, gift, categories):
 
     Argument:
     g_id (int): the id of the desired gift.
+    gift (object): generally passed through the @include_gift decorator,
+                   contains a gift object of id g_id.
+    categories (object): generally passed through the
+                         @include_categories decorator,
+                         contains all categories in the database.
     """
     return render_template('edit_gift.html',
                            gift=gift,
@@ -208,8 +236,10 @@ def edit_post(g_id, gift):
     Login required.
     One has to be the creator of the gift to access this.
 
-    Argument:
+    Arguments:
     g_id (int): the id of the desired gift.
+    gift (object): generally passed through the @include_gift decorator,
+                   contains a gift object of id g_id.
     """
     gift.name = request.form.get('name')
     gift.picture = request.form.get('picture')
@@ -235,8 +265,10 @@ def delete_get(g_id, gift):
     Login required.
     One has to be the creator of the gift to access this.
 
-    Argument:
+    Arguments:
     g_id (int): the id of the desired gift.
+    gift (object): generally passed through the @include_gift decorator,
+                   contains a gift object of id g_id.
     """
     return render_template('delete_gift.html',
                            gift=gift)
@@ -254,6 +286,8 @@ def delete_post(g_id, gift):
 
     Argument:
     g_id (int): the id of the desired gift.
+    gift (object): generally passed through the @include_gift decorator,
+                   contains a gift object of id g_id.
     """
     c.delete(gift)
     c.commit()
