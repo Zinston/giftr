@@ -12,7 +12,7 @@
 			<h5 class="card-title mb-0">{{ gift.name }}</h5>
 		</a>
 		<span class="badge badge-secondary mb-3">{{ gift.category.name }}</span>
-		<small class="float-right text-muted">Offered by {{ gift.creator.name }}</small>
+		<small class="float-right text-muted">Offered by <a href="{{ url_for('gifts.get_byuserid', u_id=gift.creator_id) }}">{{ gift.creator.name }}</a></small>
 		<p class="card-text mb-2">{{ gift.description }}</p>
 		<p class="card-text">
 			<small class="text-muted">

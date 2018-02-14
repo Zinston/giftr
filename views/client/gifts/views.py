@@ -97,7 +97,7 @@ def get_byid(g_id):
 @gifts_blueprint.route('/gifts/user/<int:u_id>', methods=['GET'])
 def get_byuserid(u_id):
     """Render all gifts created by a user of id u_id."""
-    gifts = c.query(Gift).filter_by(creator_id=u_id).all()
+    gifts = c.query(Gift).filter_by(creator_id=u_id).order_by(Gift.created_at.desc()).all()
     user = c.query(User).filter_by(id=u_id).first()
     categories = c.query(Category).all()
 
