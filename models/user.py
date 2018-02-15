@@ -28,6 +28,9 @@ class User(Base):
     picture = Column(
                 String(80))
 
+    oauth_id = Column(
+                String(80))
+
     created_at = Column(
                     DateTime,
                     default=datetime.now())

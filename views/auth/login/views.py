@@ -201,13 +201,13 @@ def gconnect():
     # -------
 
     # 1. Get the user id from db if user exists
-    user_id = get_user_id(session.get('email'))
+    user_id = user_id = get_user_id_by_oauthid(session.get('gplus_id'))
 
     # 2. If it doesn't exist: create it and get his
     # newly created id
     if not user_id:
         user_id = create_user_from_session()
-        flash('Welcom %s! You successfully signed up!' % session['username'])
+        flash('Welcome %s! You successfully signed up!' % session['username'])
     else:
         flash("""Welcome %s!
                  You were successfully logged in!""" % session['username'])
@@ -262,13 +262,13 @@ def fbconnect():
     # 4. Check if user needs to be registered
 
     # 4.1. Get the user id from db if user exists
-    user_id = get_user_id(session.get('email'))
+    user_id = get_user_id_by_oauthid(session.get('fb_id'))
 
     # 4.2. If it doesn't exist: create it and get his
     # newly created id
     if not user_id:
         user_id = create_user_from_session()
-        flash('Welcom %s! You successfully signed up!' % session['username'])
+        flash('Welcome %s! You successfully signed up!' % session['username'])
     else:
         flash("""Welcome %s!
                  You were successfully logged in!""" % session['username'])
@@ -291,10 +291,15 @@ def get_random_string():
 
 def create_user_from_session():
     """Add a user to database from session, return its database id."""
+    oauth_id = session.get('fb_id')
+    if session.get('gplus_id'):
+        oauth_id = session['gplus_id']
+
     # Create a new User in db with the info from the session
     new_user = User(name=session.get('username'),
                     email=session.get('email'),
-                    picture=session.get('picture'))
+                    picture=session.get('picture'),
+                    oauth_id=oauth_id)
     c.add(new_user)
     c.commit()
 
@@ -313,6 +318,19 @@ def get_user_id(email):
     """
     try:
         user = c.query(User).filter_by(email=email).one()
+        return user.id
+    except:
+        return None
+
+
+def get_user_id_by_oauthid(oauth_id):
+    """Return a user's database id from their OAuth id.
+
+    Argument:
+    oauth_id (str): the user's OAuth (Facebook or Google) id.
+    """
+    try:
+        user = c.query(User).filter_by(oauth_id=oauth_id).one()
         return user.id
     except:
         return None
