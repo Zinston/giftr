@@ -1,0 +1,20 @@
+{% extends 'index.html' %}
+
+{% block header %}
+{% if session.picture %}
+<header class="jumbotron" style="background: url('{{ session.picture }}') no-repeat; background-size: cover;">
+{% else %}
+<header class="jumbotron">
+{% endif %}
+	<h1 class="display-4">Are you sure you want to delete your account?</h1>
+	<p class="lead">This will also delete all your gifts and claims...</p>
+</header>
+{% endblock %}
+
+{% block body %}
+<form method="POST" action="{{ url_for('users.delete_post', u_id=session.user_id) }}" class="text-center">
+	<input name="_csrf_token" type="hidden" value="{{ csrf_token() }}">
+
+	<button class="btn btn-danger btn-lg" type="submit">Confirm</button>
+</form>
+{% endblock %}

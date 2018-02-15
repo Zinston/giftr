@@ -1,0 +1,46 @@
+{% extends 'index.html' %}
+
+{% block header %}
+{% if session.picture %}
+<header class="jumbotron" style="background: url('{{ session.picture }}') no-repeat; background-size: cover;">
+{% else %}
+<header class="jumbotron">
+{% endif %}
+	<h1 class="display-4">Edit your account</h1>
+</header>
+{% endblock %}
+
+{% block nav %}
+<ol class="breadcrumb ml-auto mb-0" style="padding:.5rem 1rem;">
+	<li class="breadcrumb-item"><a href="{{ url_for('users.get_byid', u_id=session.user_id) }}">Your account</a></li>
+    <li class="breadcrumb-item active" aria-current="page">Edit</li>
+</ol>
+{% endblock %}
+
+{% block body %}
+<form method="POST" action="{{ url_for('users.edit_post', u_id=session.user_id) }}">
+    <input name="_csrf_token" type="hidden" value="{{ csrf_token() }}">
+
+	<div class="form-group">
+		<label for="name">Name</label>
+    	<input id="name" class="form-control" type='text' name='name' placeholder='Name' value='{{ session.username }}'>
+    </div>
+
+    <div class="form-group">
+    	<label for="picture">Picture URL</label>
+    	<input id="picture" class="form-control" type='text' name='picture' placeholder='Picture URL' value='{{ session.picture }}'>
+    </div>
+
+    <div class="form-group">
+    	<label for="email">Email</label>
+    	<input id="email" class="form-control" type='email' name='email' placeholder='Email' value='{{ session.email }}'>
+    </div>
+
+    <div class="form-group">
+        <label for="address">Address</label>
+        <input id="address" class="form-control" type="text" name="address" placeholder="Address" value="{{ session.address }}">
+    </div>
+
+    <button class="btn btn-outline-success" type="submit">Edit</button>
+</form>
+{% endblock %}

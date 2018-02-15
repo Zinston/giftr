@@ -1,0 +1,39 @@
+{% extends "index.html" %}
+
+{% block header %}
+{% if user.picture %}
+<header class="jumbotron" style="background: url('{{ user.picture }}') no-repeat; background-size: cover;">
+{% else %}
+<header class="jumbotron">
+{% endif %}
+	<h1 class="display-4">{{ user.name | truncate(50) }}</h1>
+</header>
+{% endblock %}
+
+{% block body %}
+
+<table class="table">
+	<tr>
+		<th scope="row">Username</th>
+		<td>{{ user.name }}</td>
+	</tr>
+	<tr>
+		<th scope="row">Picture</th>
+		<td>{{ user.picture }}</td>
+	</tr>
+	<tr>
+		<th scope="row">Email</th>
+		<td>{{ user.email }}</td>
+	</tr>
+	<tr>
+		<th scope="row">Address</th>
+		<td>{{ user.address }}</td>
+	</tr>
+</table>
+
+{% if session.user_id == user.id %}
+<a href="{{ url_for('users.edit_get', u_id=session.user_id) }}" class="btn btn-outline-warning">Edit</a>
+<a href="{{ url_for('users.delete_get', u_id=session.user_id) }}" class="btn btn-outline-danger">Delete</a>
+{% endif %}
+
+{% endblock %}

@@ -16,6 +16,7 @@ import logging
 from views.client.gifts.views import gifts_blueprint
 from views.client.claims.views import claims_blueprint
 from views.client.categories.views import categories_blueprint
+from views.client.users.views import users_blueprint
 
 from views.auth.login.views import login_blueprint
 from views.auth.logout.views import logout_blueprint
@@ -46,6 +47,7 @@ app.config.from_pyfile('flask.cfg')
 app.register_blueprint(gifts_blueprint)
 app.register_blueprint(claims_blueprint)
 app.register_blueprint(categories_blueprint)
+app.register_blueprint(users_blueprint)
 
 app.register_blueprint(login_blueprint)
 app.register_blueprint(logout_blueprint)

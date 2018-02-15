@@ -30,7 +30,7 @@
 			{% if session.username %}
 			<div class="ml-auto d-flex flex-row justify-content-center mt-3 mt-xl-0">
 				<div class="d-flex flex-column mr-2">
-					<div class="text-right"><a href="{{ url_for('gifts.get_byuserid', u_id=session.user_id) }}">{{ session.username }}</a></div>
+					<div class="text-right"><a href="{{ url_for('users.get_byid', u_id=session.user_id) }}">{{ session.username }}</a></div>
 					<div class="text-right"><small><a href="{{ url_for('logout.disconnect') }}">Log out</a></small></div>
 				</div>
 				<div class="d-flex flex-column">
