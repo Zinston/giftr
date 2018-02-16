@@ -25,10 +25,12 @@
 		<th scope="row">Email</th>
 		<td>{{ user.email }}</td>
 	</tr>
+	{% if user.id == session.user_id %}
 	<tr>
 		<th scope="row">Address</th>
-		<td>{{ user.address }}</td>
+		<td>{{ session.address }}</td>
 	</tr>
+	{% endif %}
 </table>
 
 {% if session.user_id == user.id %}
