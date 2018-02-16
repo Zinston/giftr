@@ -1,4 +1,9 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
+from sqlalchemy import (Column,
+                        ForeignKey,
+                        Integer,
+                        String,
+                        DateTime,
+                        Boolean)
 from sqlalchemy.orm import relationship
 from datetime import datetime
 
@@ -27,6 +32,10 @@ class Claim(Base):
     updated_at = Column(
                     DateTime,
                     onupdate=datetime.now())
+
+    accepted = Column(
+                Boolean,
+                default=False)
 
     gift_id = Column(
                     Integer,

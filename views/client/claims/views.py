@@ -46,7 +46,7 @@ def include_claim(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         c_id = kwargs['c_id']
-        gift = c.query(Claim).filter_by(id=c_id).one_or_none()
+        claim = c.query(Claim).filter_by(id=c_id).one_or_none()
         if not claim:
             flash('There\'s no claim here.')
             return redirect(url_for('claims.get'))
@@ -109,6 +109,23 @@ def get(g_id):
                            claims=claims)
 
 
+@claims_blueprint.route('/gifts/<int:g_id>/claims/<int:c_id>', methods=['GET'])
+@include_claim
+def get_byid(g_id, c_id, claim):
+    """Render a claim of id c_id on a gift of id g_id.
+
+    Login required.
+
+    Arguments:
+    g_id (int): the id of the desired gift.
+    c_id (int): the id of the desired claim.
+    claim (object): generally passed through the @include_claim decorator,
+                    contains a claim object of id c_id.
+    """
+    return render_template('claim.html',
+                           claim=claim)
+
+
 @claims_blueprint.route('/gifts/<int:g_id>/claims/add', methods=['GET'])
 @login_required
 def add_get(g_id):
@@ -161,23 +178,6 @@ def add_post(g_id):
     return redirect(url_for('claims.get_byid',
                             g_id=g_id,
                             c_id=claim.id))
-
-
-@claims_blueprint.route('/gifts/<int:g_id>/claims/<int:c_id>', methods=['GET'])
-@include_claim
-def get_byid(g_id, c_id, claim):
-    """Render a claim of id c_id on a gift of id g_id.
-
-    Login required.
-
-    Arguments:
-    g_id (int): the id of the desired gift.
-    c_id (int): the id of the desired claim.
-    claim (object): generally passed through the @include_claim decorator,
-                    contains a claim object of id c_id.
-    """
-    return render_template('claim.html',
-                           claim=claim)
 
 
 @claims_blueprint.route('/gifts/<int:g_id>/claims/<int:c_id>/edit', methods=['GET'])  # noqa
@@ -275,9 +275,18 @@ def delete_post(g_id, c_id, claim):
                             g_id=g_id))
 
 
-@claims_blueprint.route('/gifts/<int:g_id>/claims/<int:c_id>/accept', method=['POST'])  # noqa
+@claims_blueprint.route('/gifts/<int:g_id>/claims/<int:c_id>/accept', methods=['POST'])  # noqa
 @login_required
 @include_claim
 @gift_creator_required
 def accept_post(g_id, c_id, claim):
-    pass
+    claim.accepted = True
+
+    c.add(claim)
+    c.commit()
+
+    flash("You accepted %s's claim on your gift." % claim.creator.name)
+
+    return redirect(url_for('claims.get',
+                            g_id=g_id))
+

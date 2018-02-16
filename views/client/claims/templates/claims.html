@@ -30,7 +30,10 @@
 <div class="list-group">
     {% for claim in claims %}
     <a href="{{ url_for('claims.get_byid', g_id=claim.gift_id, c_id=claim.id) }}" class="list-group-item list-group-item-action">
-    	<span class="float-left">{{ claim.creator.name }}</span>
+    	{% if claim.accepted %}
+        <span class="badge badge-success">Accepted</span>
+        {% endif %}
+        <span>{{ claim.creator.name }}</span>
     	<span class="float-right">{{ claim.created_at.strftime('%d %b %Y at %H:%M') }}</span>
     </a>
     {% endfor %}

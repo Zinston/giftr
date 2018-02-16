@@ -29,6 +29,16 @@
 	Created on {{ claim.created_at.strftime('%d %b %Y at %H:%M') }}
 </small>
 
+{% if session.username and session.user_id == claim.gift.creator_id %}
+<br>
+<br>
+<form method="POST" action="{{ url_for('claims.accept_post', g_id=claim.gift.id, c_id=claim.id) }}">
+	<input name="_csrf_token" type="hidden" value="{{ csrf_token() }}">
+
+	<button class="btn btn-success" type="submit">Accept this claim!</button>
+</form>
+{% endif %}
+
 {% if session.username %}
 <br>
 <br>
