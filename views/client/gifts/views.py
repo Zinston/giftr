@@ -82,6 +82,18 @@ def creator_required(f):
     return decorated_function
 
 
+def open_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        gift = kwargs['gift']
+
+        if not gift.open:
+            flash('You cannot do this anymore. The gift has been promised.')
+            return redirect(url_for('gifts.get'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
 # ROUTES
 
 @gifts_blueprint.route('/', methods=['GET'])
@@ -206,6 +218,7 @@ def add_post():
 @login_required
 @include_gift
 @creator_required
+@open_required
 @include_categories
 def edit_get(g_id, gift, categories):
     """Render an edit form for a gift of id g_id.
@@ -229,6 +242,7 @@ def edit_get(g_id, gift, categories):
 @gifts_blueprint.route('/gifts/<int:g_id>/edit', methods=['POST'])
 @login_required
 @include_gift
+@open_required
 @creator_required
 def edit_post(g_id, gift):
     """Edit a gift of id g_id with POST.
@@ -258,6 +272,7 @@ def edit_post(g_id, gift):
 @gifts_blueprint.route('/gifts/<int:g_id>/delete', methods=['GET'])
 @login_required
 @include_gift
+@open_required
 @creator_required
 def delete_get(g_id, gift):
     """Render a delete form for a gift of id g_id.
@@ -277,6 +292,7 @@ def delete_get(g_id, gift):
 @gifts_blueprint.route('/gifts/<int:g_id>/delete', methods=['POST'])
 @login_required
 @include_gift
+@open_required
 @creator_required
 def delete_post(g_id, gift):
     """Delete a gift of id g_id with POST.

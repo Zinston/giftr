@@ -83,6 +83,18 @@ def gift_creator_required(f):
     return decorated_function
 
 
+def open_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        claim = kwargs['claim']
+
+        if not claim.gift.open:
+            flash('You cannot do this anymore. The gift has been promised.')
+            return redirect(url_for('gifts.get'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
 # ROUTES
 
 @claims_blueprint.route('/gifts/claims', methods=['GET'])
@@ -128,6 +140,7 @@ def get_byid(g_id, c_id, claim):
 
 @claims_blueprint.route('/gifts/<int:g_id>/claims/add', methods=['GET'])
 @login_required
+@open_required
 def add_get(g_id):
     """Render form to add a claim on a gift of id g_id.
 
@@ -150,6 +163,7 @@ def add_get(g_id):
 
 @claims_blueprint.route('/gifts/<int:g_id>/claims/add', methods=['POST'])
 @login_required
+@open_required
 def add_post(g_id):
     """Add a claim on a gift of id g_id to the database with POST.
 
@@ -184,6 +198,7 @@ def add_post(g_id):
 @login_required
 @include_claim
 @creator_required
+@open_required
 def edit_get(g_id, c_id, claim):
     """Render edit form for a claim of id c_id on a gift of id g_id.
 
@@ -204,6 +219,7 @@ def edit_get(g_id, c_id, claim):
 @login_required
 @include_claim
 @creator_required
+@open_required
 def edit_post(g_id, c_id, claim):
     """Edit a claim of id c_id on a gift of id g_id with POST.
 
@@ -232,6 +248,7 @@ def edit_post(g_id, c_id, claim):
 @login_required
 @include_claim
 @creator_required
+@open_required
 def delete_get(g_id, c_id, claim):
     """Render delete form for a claim with c_id on a gift with g_id.
 
@@ -252,6 +269,7 @@ def delete_get(g_id, c_id, claim):
 @login_required
 @include_claim
 @creator_required
+@open_required
 def delete_post(g_id, c_id, claim):
     """Delete a claim of id c_id on a gift of id g_id with POST.
 
@@ -279,6 +297,7 @@ def delete_post(g_id, c_id, claim):
 @login_required
 @include_claim
 @gift_creator_required
+@open_required
 def accept_post(g_id, c_id, claim):
     claim.accepted = True
     c.add(claim)
