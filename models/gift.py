@@ -1,4 +1,9 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
+from sqlalchemy import (Column,
+                        ForeignKey,
+                        Integer,
+                        String,
+                        DateTime,
+                        Boolean)
 from sqlalchemy.orm import relationship
 from datetime import datetime
 
@@ -25,6 +30,10 @@ class Gift(Base):
 
     description = Column(
                     String(140))
+
+    open = Column(
+            Boolean,
+            default=True)
 
     created_at = Column(
                     DateTime,

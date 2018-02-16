@@ -281,8 +281,12 @@ def delete_post(g_id, c_id, claim):
 @gift_creator_required
 def accept_post(g_id, c_id, claim):
     claim.accepted = True
-
     c.add(claim)
+
+    gift = claim.gift
+    gift.open = False
+    c.add(gift)
+
     c.commit()
 
     flash("You accepted %s's claim on your gift." % claim.creator.name)
