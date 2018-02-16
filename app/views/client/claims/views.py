@@ -14,10 +14,14 @@ from flask import (request,
                    render_template,
                    flash,
                    session,
-                   Blueprint)
+                   Blueprint,
+                   current_app)
 
 # For making decorators
 from functools import wraps
+
+# For sending emails
+from flask_mail import Mail, Message
 
 # Bind database
 engine = create_engine('sqlite:///giftr.db')
@@ -26,7 +30,6 @@ DBSession = sessionmaker(bind=engine)
 c = DBSession()
 
 claims_blueprint = Blueprint('claims', __name__, template_folder='templates')
-
 
 # DECORATORS
 
@@ -52,6 +55,21 @@ def include_claim(f):
             return redirect(url_for('claims.get'))
         # pass along the claim object to the next function
         kwargs['claim'] = claim
+        return f(*args, **kwargs)
+    return decorated_function
+
+
+def include_gift(f):
+    """Take a g_id kwarg and return a gift object (decorator)."""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        g_id = kwargs['g_id']
+        gift = c.query(Gift).filter_by(id=g_id).one_or_none()
+        if not gift:
+            flash('There\'s no gift here.')
+            return redirect(url_for('gifts.get'))
+        # pass along the gift object to the next function
+        kwargs['gift'] = gift
         return f(*args, **kwargs)
     return decorated_function
 
@@ -86,9 +104,13 @@ def gift_creator_required(f):
 def open_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        claim = kwargs['claim']
+        if kwargs.get('claim'):
+            claim = kwargs['claim']
+            gift = claim.gift
+        elif kwargs.get('gift'):
+            gift = kwargs['gift']
 
-        if not claim.gift.open:
+        if not gift.open:
             flash('You cannot do this anymore. The gift has been promised.')
             return redirect(url_for('gifts.get'))
         return f(*args, **kwargs)
@@ -140,8 +162,9 @@ def get_byid(g_id, c_id, claim):
 
 @claims_blueprint.route('/gifts/<int:g_id>/claims/add', methods=['GET'])
 @login_required
+@include_gift
 @open_required
-def add_get(g_id):
+def add_get(g_id, gift):
     """Render form to add a claim on a gift of id g_id.
 
     Login required.
@@ -150,8 +173,6 @@ def add_get(g_id):
     Argument:
     g_id (int): the id of the desired gift.
     """
-    gift = c.query(Gift).filter_by(id=g_id).first()
-
     if gift.creator_id == session.get('user_id'):
         flash('You cannot claim your own gift ;-)')
         return redirect(url_for('gifts.get_byid',
@@ -163,8 +184,9 @@ def add_get(g_id):
 
 @claims_blueprint.route('/gifts/<int:g_id>/claims/add', methods=['POST'])
 @login_required
+@include_gift
 @open_required
-def add_post(g_id):
+def add_post(g_id, gift):
     """Add a claim on a gift of id g_id to the database with POST.
 
     Login required.
@@ -173,8 +195,6 @@ def add_post(g_id):
     Argument:
     g_id (int): the id of the desired gift.
     """
-    gift = c.query(Gift).filter_by(id=g_id).first()
-
     if gift.creator_id == session.get('user_id'):
         flash('You cannot claim your own gift ;-)')
         return redirect(url_for('gifts.get_byid',
@@ -299,14 +319,32 @@ def delete_post(g_id, c_id, claim):
 @gift_creator_required
 @open_required
 def accept_post(g_id, c_id, claim):
-    claim.accepted = True
-    c.add(claim)
+    #claim.accepted = True
+    #c.add(claim)
 
-    gift = claim.gift
-    gift.open = False
-    c.add(gift)
+    #ift = claim.gift
+    #gift.open = False
+    #c.add(gift)
 
-    c.commit()
+    #c.commit()
+
+    giver_name = session.get('username')
+    giver_email = session.get('email')
+    claimer_name = claim.creator.name
+    claimer_email = claim.creator.email
+
+    message = """Hi %s and %s,\n
+                 \n
+                 Here's a mail to put you guys in contact so you can organize the
+                 picking up of %s's gift.\n
+                 \n
+                 Thanks for using Giftr,\n
+                 \n
+                 Giftr""" % (giver_name, claimer_name, giver_name)
+    msg = Message("Hello",
+                  sender="Giftr <giftr@gmail.com>",
+                  recipients=[claimer_email, giver_email])
+    mail.send(msg)
 
     flash("You accepted %s's claim on your gift." % claim.creator.name)
 

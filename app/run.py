@@ -35,6 +35,8 @@ from models import (Base,
                     Category,
                     Claim)
 
+from flask_mail import Mail, Message
+
 engine = create_engine('sqlite:///giftr.db')
 Base.metadata.create_all(engine)
 
@@ -42,6 +44,8 @@ Base.metadata.create_all(engine)
 # Bind Flask
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_pyfile('flask.cfg')
+mail = Mail()
+mail.init_app(app)
 
 # register the blueprints
 app.register_blueprint(gifts_blueprint)
