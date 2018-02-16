@@ -7,33 +7,23 @@ from sqlalchemy import (Column,
 from sqlalchemy.orm import relationship
 from datetime import datetime
 
-from models import (Base,
+from application.models import (Base,
                     User,
-                    Category)
+                    Gift)
 
-class Gift(Base):
-    """Database table for a gift."""
+class Claim(Base):
+    """Database table for a claim on a gift."""
 
     # TABLE #
-    __tablename__ = 'gift'
+    __tablename__ = 'claim'
     # MAPPER#
     id = Column(
             Integer,
             primary_key=True)
 
-    name = Column(
-            String(80),
+    message = Column(
+            String(140),
             nullable=False)
-
-    picture = Column(
-                String(80))
-
-    description = Column(
-                    String(140))
-
-    open = Column(
-            Boolean,
-            default=True)
 
     created_at = Column(
                     DateTime,
@@ -43,28 +33,30 @@ class Gift(Base):
                     DateTime,
                     onupdate=datetime.now())
 
+    accepted = Column(
+                Boolean,
+                default=False)
+
+    gift_id = Column(
+                    Integer,
+                    ForeignKey('gift.id'))
+
+    gift = relationship(Gift)
+
     creator_id = Column(
                     Integer,
                     ForeignKey('user.id'))
 
     creator = relationship(User)
 
-    category_id = Column(
-                    Integer,
-                    ForeignKey('category.id'))
-
-    category = relationship(Category)
-
     @property
     def serialize(self):
         """Return object data in easily serializeable format."""
         return {
             'id': self.id,
-            'name': self.name,
-            'picture': self.picture,
-            'description': self.description,
+            'message': self.message,
             'created_at': self.created_at,
             'updated_at': self.updated_at,
-            'creator_id': self.creator_id,
-            'category_id': self.category_id
+            'gift_id': self.gift_id,
+            'creator_id': self.creator_id
         }

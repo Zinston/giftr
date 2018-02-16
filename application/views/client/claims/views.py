@@ -4,7 +4,7 @@
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from models import (Base,
+from application.models import (Base,
                     Gift,
                     Claim)
 
@@ -22,6 +22,7 @@ from functools import wraps
 
 # For sending emails
 from flask_mail import Mail, Message
+from application import mail
 
 # Bind database
 engine = create_engine('sqlite:///giftr.db')
@@ -319,14 +320,14 @@ def delete_post(g_id, c_id, claim):
 @gift_creator_required
 @open_required
 def accept_post(g_id, c_id, claim):
-    #claim.accepted = True
-    #c.add(claim)
+    claim.accepted = True
+    c.add(claim)
 
-    #ift = claim.gift
-    #gift.open = False
-    #c.add(gift)
+    ift = claim.gift
+    gift.open = False
+    c.add(gift)
 
-    #c.commit()
+    c.commit()
 
     giver_name = session.get('username')
     giver_email = session.get('email')

@@ -7,23 +7,33 @@ from sqlalchemy import (Column,
 from sqlalchemy.orm import relationship
 from datetime import datetime
 
-from models import (Base,
+from application.models import (Base,
                     User,
-                    Gift)
+                    Category)
 
-class Claim(Base):
-    """Database table for a claim on a gift."""
+class Gift(Base):
+    """Database table for a gift."""
 
     # TABLE #
-    __tablename__ = 'claim'
+    __tablename__ = 'gift'
     # MAPPER#
     id = Column(
             Integer,
             primary_key=True)
 
-    message = Column(
-            String(140),
+    name = Column(
+            String(80),
             nullable=False)
+
+    picture = Column(
+                String(80))
+
+    description = Column(
+                    String(140))
+
+    open = Column(
+            Boolean,
+            default=True)
 
     created_at = Column(
                     DateTime,
@@ -33,30 +43,28 @@ class Claim(Base):
                     DateTime,
                     onupdate=datetime.now())
 
-    accepted = Column(
-                Boolean,
-                default=False)
-
-    gift_id = Column(
-                    Integer,
-                    ForeignKey('gift.id'))
-
-    gift = relationship(Gift)
-
     creator_id = Column(
                     Integer,
                     ForeignKey('user.id'))
 
     creator = relationship(User)
 
+    category_id = Column(
+                    Integer,
+                    ForeignKey('category.id'))
+
+    category = relationship(Category)
+
     @property
     def serialize(self):
         """Return object data in easily serializeable format."""
         return {
             'id': self.id,
-            'message': self.message,
+            'name': self.name,
+            'picture': self.picture,
+            'description': self.description,
             'created_at': self.created_at,
             'updated_at': self.updated_at,
-            'gift_id': self.gift_id,
-            'creator_id': self.creator_id
+            'creator_id': self.creator_id,
+            'category_id': self.category_id
         }

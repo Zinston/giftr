@@ -2,14 +2,14 @@ from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
 from sqlalchemy.orm import relationship
 from datetime import datetime
 
-from models import Base
+from application.models import Base
 
-class Category(Base):
-    """Database table for a gift category."""
+class User(Base):
+    """Database table for a user."""
 
     # TABLE #
-    __tablename__ = 'category'
-    # MAPPER#
+    __tablename__ = 'user'
+    # MAPPER #
     id = Column(
             Integer,
             primary_key=True)
@@ -18,10 +18,17 @@ class Category(Base):
             String(80),
             nullable=False)
 
-    description = Column(
-                    String(140))
+    email = Column(
+                String(80),
+                nullable=False)
+
+    address = Column(
+                String(200))
 
     picture = Column(
+                String(80))
+
+    oauth_id = Column(
                 String(80))
 
     created_at = Column(
@@ -38,7 +45,8 @@ class Category(Base):
         return {
             'id': self.id,
             'name': self.name,
-            'description': self.description,
+            'email': self.email,
+            'address': self.address,
             'picture': self.picture,
             'created_at': self.created_at,
             'updated_at': self.updated_at
