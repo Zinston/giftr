@@ -24,6 +24,8 @@ from functools import wraps
 from flask_mail import Mail, Message
 from application import mail
 
+from textwrap import dedent
+
 # Bind database
 engine = create_engine('sqlite:///giftr.db')
 Base.metadata.bind = engine
@@ -320,31 +322,37 @@ def delete_post(g_id, c_id, claim):
 @gift_creator_required
 @open_required
 def accept_post(g_id, c_id, claim):
+    # Mark claim as accepted
     claim.accepted = True
     c.add(claim)
 
-    ift = claim.gift
+    # Mark gift as closed
+    gift = claim.gift
     gift.open = False
     c.add(gift)
 
     c.commit()
 
+    # Send an email to both
     giver_name = session.get('username')
     giver_email = session.get('email')
     claimer_name = claim.creator.name
     claimer_email = claim.creator.email
 
-    message = """Hi %s and %s,\n
-                 \n
+    message = """
+                 Hi %s and %s,
+                 
                  Here's a mail to put you guys in contact so you can organize the
-                 picking up of %s's gift.\n
-                 \n
-                 Thanks for using Giftr,\n
-                 \n
+                 picking up of %s's gift.
+                 
+                 Thanks for using Giftr,
+                 
                  Giftr""" % (giver_name, claimer_name, giver_name)
-    msg = Message("Hello",
-                  sender="Giftr <giftr@gmail.com>",
+    message = dedent(message)  # Removes indentation
+    msg = Message("Congrats on sharing on Giftr!",
+                  sender="aguenet@gmail.com",
                   recipients=[claimer_email, giver_email])
+    msg.body = message
     mail.send(msg)
 
     flash("You accepted %s's claim on your gift." % claim.creator.name)

@@ -2,4 +2,4 @@
 *.pyc
 *.db
 curl.txt
-*client_secrets.json
+*secrets.json

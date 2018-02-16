@@ -5,7 +5,7 @@ from flask import (Flask,
 
 import string
 import random
-
+import json
 import logging
 
 # EMAIL
@@ -47,6 +47,16 @@ def create_app():
     Base.metadata.create_all(engine)
 
     # Email
+    mail_secrets_f = open('mail_secrets.json', 'r')
+    mail_secrets = mail_secrets_f.read()
+    mail_secrets_json = json.loads(mail_secrets)
+    app.config.update(
+        MAIL_SERVER=mail_secrets_json['server'],
+        MAIL_PORT=mail_secrets_json['port'],
+        MAIL_USE_SSL=mail_secrets_json['use_ssl'],
+        MAIL_USERNAME=mail_secrets_json['username'],
+        MAIL_PASSWORD=mail_secrets_json['password']
+    )
     mail.init_app(app)
 
     # Blueprints
