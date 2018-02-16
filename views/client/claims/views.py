@@ -70,6 +70,19 @@ def creator_required(f):
     return decorated_function
 
 
+def gift_creator_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        claim = kwargs['claim']
+
+        if claim.gift.creator_id != session.get('user_id'):
+            flash('You have to be the creator of that gift to accept a claim on it.')
+            return redirect(url_for('claims.get_byid',
+                                    c_id=claim.id))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
 # ROUTES
 
 @claims_blueprint.route('/gifts/claims', methods=['GET'])
@@ -260,3 +273,11 @@ def delete_post(g_id, c_id, claim):
 
     return redirect(url_for('claims.get',
                             g_id=g_id))
+
+
+@claims_blueprint.route('/gifts/<int:g_id>/claims/<int:c_id>/accept', method=['POST'])  # noqa
+@login_required
+@include_claim
+@gift_creator_required
+def accept_post(g_id, c_id, claim):
+    pass
