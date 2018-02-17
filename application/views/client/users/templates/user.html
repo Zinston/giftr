@@ -8,6 +8,14 @@
 
 {% block body %}
 
+<div class="text-center mb-3">
+	{% if session.user_id == user.id %}
+	<a class="btn btn-success btn-lg mr-3 mb-2" href="{{ url_for('gifts.get_byuserid', u_id=user.id) }}">Your gifts</a>
+	{% else %}
+	<a class="btn btn-success btn-lg mr-3 mb-2" href="{{ url_for('gifts.get_byuserid', u_id=user.id) }}">{{ user.name }}'s gifts</a>
+	{% endif %}
+</div>
+
 <div class="row">
 	<div class="col-md-3 mb-5 text-center">
 		<img class="img-fluid" src="{{ user.picture }}">
