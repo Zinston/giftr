@@ -25,6 +25,7 @@ from flask_mail import Mail, Message
 from application import mail
 
 from textwrap import dedent
+from datetime import datetime, timedelta
 
 # Bind database
 engine = create_engine('sqlite:///giftr.db')
@@ -329,8 +330,10 @@ def accept_post(g_id, c_id, claim):
     # Mark gift as closed
     gift = claim.gift
     gift.open = False
-    c.add(gift)
+    # Set gift expiring date to tomorrow
+    gift.expires_at = datetime.now() + timedelta(days=1)
 
+    c.add(gift)
     c.commit()
 
     # Send an email to both
