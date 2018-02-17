@@ -21,6 +21,8 @@ from flask import (request,
 # For making decorators
 from functools import wraps
 
+from datetime import datetime
+
 # Bind database
 engine = create_engine('sqlite:///giftr.db')
 Base.metadata.bind = engine
@@ -114,7 +116,7 @@ def get(categories):
     try:
         req_cat = int(req_cat)
         if req_cat > 0 and req_cat <= len(categories):
-            gifts = c.query(Gift).filter_by(category_id=req_cat).order_by(Gift.created_at.desc()).all()  # noqa
+            gifts = c.query(Gift).filter_by(category_id=req_cat).filter(Gift.expires_at > datetime.now()).order_by(Gift.expires_at.desc()).all()  # noqa
             req_cat = c.query(Category).filter_by(id=req_cat).first()
 
             return render_template('gifts.html',
@@ -125,7 +127,7 @@ def get(categories):
     except:
         pass
 
-    gifts = c.query(Gift).order_by(Gift.created_at.desc()).all()
+    gifts = c.query(Gift).filter(Gift.expires_at > datetime.now()).order_by(Gift.expires_at.desc()).all()
 
     return render_template('gifts.html',
                            categories=categories,
