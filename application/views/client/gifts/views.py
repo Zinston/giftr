@@ -16,7 +16,8 @@ from flask import (request,
                    render_template,
                    flash,
                    session,
-                   Blueprint)
+                   Blueprint,
+                   Markup)
 
 # For making decorators
 from functools import wraps
@@ -151,6 +152,12 @@ def get_byid(g_id, gift, categories):
                          @include_categories decorator,
                          contains all categories in the database.
     """
+    # If user is gift's creator and that gift expired, flash them
+    if session.get('username'):
+        if gift.creator_id == session.get('user_id'):
+            if gift.expires_at < datetime.now():
+                flash(Markup('Your gift expired. <a href="#">Bring it back to life for 5 days</a>.'))
+
     return render_template('gift.html',
                            gift=gift,
                            categories=categories,
