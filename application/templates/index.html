@@ -15,18 +15,23 @@
 	</head>
 	<body>
 		<nav class="navbar navbar-expand-xl navbar-light bg-light fixed-top">
-			<a class="navbar-brand" href="{{ url_for('gifts.get') }}">Giftr</a>
-			<div class="navbar-nav">
-				<a class="nav-item nav-link" href="{{ url_for('gifts.get') }}">Home</a>
-				<a class="nav-item nav-link" href="{{ url_for('categories.get') }}">Categories</a>
-				{% if session.username %}
-				<a class="nav-item nav-link" href="{{ url_for('gifts.add_get') }}">Give something</a>
-				{% endif %}
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+			    <span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarToggler">
+				<a class="navbar-brand" href="{{ url_for('gifts.get') }}">Giftr</a>
+				<div class="navbar-nav">
+					<a class="nav-item nav-link" href="{{ url_for('gifts.get') }}">Home</a>
+					<a class="nav-item nav-link" href="{{ url_for('categories.get') }}">Categories</a>
+					{% if session.username %}
+					<a class="nav-item nav-link" href="{{ url_for('gifts.add_get') }}">Give something</a>
+					{% endif %}
+				</div>
+
+				{% block nav %}
+				{% endblock %}
+
 			</div>
-
-			{% block nav %}
-			{% endblock %}
-
 			{% if session.username %}
 			<div class="ml-auto d-flex flex-row justify-content-center mt-3 mt-xl-0">
 				<div class="d-flex flex-column mr-2">

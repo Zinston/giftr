@@ -44,6 +44,14 @@
 }
 
 
+header {
+    margin-top: 70px;
+}
+
+nav form, nav ol {
+    margin-right: 20px;
+}
+
 
 .card {
     max-width: 400px;
@@ -60,6 +68,7 @@
 
 .jumbotron {
     background-color: white;
+    margin-bottom: 0;
 }
 
 .navbar-img {

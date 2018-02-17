@@ -25,12 +25,12 @@
 		</p>
 		<div class="links text-center">
 			{% if page == "gifts" %}
-			<a href="{{ url_for('gifts.get_byid', g_id=gift.id) }}" class="btn btn-info">View</a>
+			<a href="{{ url_for('gifts.get_byid', g_id=gift.id) }}" class="btn btn-info mb-2">View</a>
 			{% elif page == "gift" %}
-			<a href="{{ url_for('claims.get', g_id=gift.id) }}" class="btn btn-outline-info">Claims</a>
+			<a href="{{ url_for('claims.get', g_id=gift.id) }}" class="btn btn-outline-info mb-2">Claims</a>
 			{% endif %}
 			{% if session.username and gift.creator_id == session.user_id and gift.open %}
-			<a href="{{ url_for('gifts.edit_get', g_id=gift.id) }}" class="btn btn-outline-warning">Edit</a>
+			<a href="{{ url_for('gifts.edit_get', g_id=gift.id) }}" class="btn btn-outline-warning mb-2">Edit</a>
 			<a href="{{ url_for('gifts.delete_get', g_id=gift.id) }}" class="btn btn-outline-danger">Delete</a>
 			{% endif %}
 		</div>
