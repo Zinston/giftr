@@ -19,8 +19,12 @@
 		<p class="card-text mb-2">{{ gift.description }}</p>
 		<p class="card-text">
 			<small class="text-muted">
-				{% if gift.updated_at %}<br>Last updated on {{ gift.updated_at.strftime('%d %b %Y at %H:%M') }}<br>{% endif %}
+				Expires on {{ gift.expires_at.strftime('%d %b %Y at %H:%M') }}<br>
+				{% if gift.updated_at %}
+				Last updated on {{ gift.updated_at.strftime('%d %b %Y at %H:%M') }}
+				{% else %}
 				Created on {{ gift.created_at.strftime('%d %b %Y at %H:%M') }}
+				{% endif %}
 			</small>
 		</p>
 		<div class="links text-center">
@@ -31,7 +35,7 @@
 			{% endif %}
 			{% if session.username and gift.creator_id == session.user_id and gift.open %}
 			<a href="{{ url_for('gifts.edit_get', g_id=gift.id) }}" class="btn btn-outline-warning mb-2">Edit</a>
-			<a href="{{ url_for('gifts.delete_get', g_id=gift.id) }}" class="btn btn-outline-danger">Delete</a>
+			<a href="{{ url_for('gifts.delete_get', g_id=gift.id) }}" class="btn btn-outline-danger mb-2">Delete</a>
 			{% endif %}
 		</div>
 	</div>

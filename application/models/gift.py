@@ -5,7 +5,7 @@ from sqlalchemy import (Column,
                         DateTime,
                         Boolean)
 from sqlalchemy.orm import relationship
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from application.models import (Base,
                     User,
@@ -42,6 +42,10 @@ class Gift(Base):
     updated_at = Column(
                     DateTime,
                     onupdate=datetime.now())
+
+    expires_at = Column(
+                    DateTime,
+                    default=datetime.now() + timedelta(days=5))
 
     creator_id = Column(
                     Integer,
