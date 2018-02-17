@@ -22,7 +22,7 @@ from flask import (request,
 # For making decorators
 from functools import wraps
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # Bind database
 engine = create_engine('sqlite:///giftr.db')
@@ -156,7 +156,11 @@ def get_byid(g_id, gift, categories):
     if session.get('username'):
         if gift.creator_id == session.get('user_id'):
             if gift.expires_at < datetime.now():
-                flash(Markup('Your gift expired. <a href="#">Bring it back to life for 5 days</a>.'))
+                msg = """<form method="POST" action="%s">
+                            Your gift expired.
+                            <input type="submit" class="btn btn-success ml-4" value="Bring it back to life for 5 days"></input>
+                         </form>""" % url_for('gifts.extend', g_id=g_id)
+                flash(Markup(msg))
 
     return render_template('gift.html',
                            gift=gift,
@@ -326,3 +330,18 @@ def delete_post(g_id, gift):
     flash("%s was successfully deleted." % gift.name)
 
     return redirect(url_for('gifts.get'))
+
+
+@gifts_blueprint.route('/gifts/<int:g_id>/extend', methods=['POST'])
+@login_required
+@include_gift
+@creator_required
+def extend(g_id, gift):
+    gift.expires_at += timedelta(days=5)
+    c.add(gift)
+    c.commit()
+
+    flash("%s is available again for five days." % gift.name)
+
+    return redirect(url_for('gifts.get_byid',
+                            g_id=g_id))
