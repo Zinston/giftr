@@ -27,10 +27,8 @@
 	Created on {{ category.created_at.strftime('%d %b %Y at %H:%M') }}
 </small>
 
-{% if session.username %}
 <br>
 <br>
 <a href="{{ url_for('categories.edit_get', cat_id=category.id) }}" class="btn btn-outline-warning">Edit</a>
 <a href="{{ url_for('categories.delete_get', cat_id=category.id) }}" class="btn btn-outline-danger">Delete</a>
-{% endif %}
 {% endblock %}

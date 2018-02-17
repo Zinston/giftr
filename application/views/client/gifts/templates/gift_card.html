@@ -4,7 +4,7 @@
 		<img class="card-img-top img-fluid" src="{{ gift.picture }}">
 	</div>
 	{% endif %}
-	{% if session.username and gift.creator_id != session.user_id and gift.open %}
+	{% if (not session.username or gift.creator_id != session.user_id) and gift.open %}
 	<a href="{{ url_for('claims.add_get', g_id=gift.id) }}" class="btn btn-success">Claim</a>
 	{% endif %}
 	<div class="card-body">
